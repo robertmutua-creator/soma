@@ -10,6 +10,10 @@ class Controller
     // Render a view through the main layout.
     protected function view(array $data = []): void
     {
+        if ($this->isLoggedIn()) {
+            $data['links'] = $this->getLinks();
+            $data['user'] = $_SESSION['user'];
+        }
         extract($data, EXTR_SKIP);
 
         require dirname(__DIR__) . '/Views/layout.php';
@@ -161,5 +165,28 @@ class Controller
                 echo "Access Denied: Your user role is not recognized or authorized.";
                 break;
         }
+    }
+
+    protected function getLinks(): array
+    {
+        if (!$this->isLoggedIn()) {
+            $this->redirect('/login');
+        }
+
+        $role = $_SESSION['user']['role'];
+
+        $links = [
+            ['link' => '/dashboard', 'label' => 'Dashboard']
+        ];
+
+        switch ($role) {
+            case 'admin':
+                $links[] = ['link' => '/schools', 'label' => 'Manage Schools'];
+                break;
+        }
+
+        $links[] = ['link' => '/logout', 'label' => 'Logout'];
+
+        return $links;
     }
 }
