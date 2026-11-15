@@ -1,0 +1,32 @@
+# Environment variables
+.env
+.env.*
+
+# Dependencies
+/vendor/
+
+# Logs
+*.log
+errors.log
+
+# User uploads
+/public/uploads/*
+!/public/uploads/.gitkeep
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+/tmp/
+/cache/
+*.tmp
+
+# PHP
+.phpunit.cache/

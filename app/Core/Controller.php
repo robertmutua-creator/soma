@@ -1,0 +1,137 @@
+<?php
+
+namespace App\Core;
+
+class Controller
+{
+    // Render a view through the main layout.
+    protected function view(array $data = []): void
+    {
+        extract($data, EXTR_SKIP);
+
+        require dirname(__DIR__) . '/Views/layout.php';
+    }
+
+    // Store a flash message in the session.
+    protected function flash(string $type, string $message): void
+    {
+        $_SESSION['flash'] = [
+            'type' => $type,
+            'message' => $message
+        ];
+    }
+
+    // Check whether a user is logged in.
+    protected function isLoggedIn(): bool
+    {
+        return isset($_SESSION['user_id']);
+    }
+
+    // Check whether the logged-in user has a specific role.
+    protected function checkRole(string $role): bool
+    {
+        return $this->isLoggedIn()
+            && ($_SESSION['role'] ?? null) === $role;
+    }
+
+    // Upload a file and return its relative path.
+    protected function uploadFile(array $file, string $category): string|false
+    {
+        $allowed = ['schools', 'teachers', 'students'];
+
+        if (!in_array($category, $allowed, true)) {
+            return false;
+        }
+
+        if (
+            !isset($file['tmp_name'], $file['error']) ||
+            $file['error'] !== UPLOAD_ERR_OK
+        ) {
+            return false;
+        }
+
+        $directory = dirname(__DIR__, 2) . "/public/uploads/{$category}";
+
+        if (!is_dir($directory) && !mkdir($directory, 0755, true)) {
+            return false;
+        }
+
+        $extension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+        $filename = bin2hex(random_bytes(16)) . ($extension ? ".{$extension}" : '');
+
+        if (!move_uploaded_file($file['tmp_name'], "{$directory}/{$filename}")) {
+            return false;
+        }
+
+        return "{$category}/{$filename}";
+    }
+
+    // Delete an uploaded file from the server.
+    protected function deleteFile(string $file): bool
+    {
+        $base = realpath(dirname(__DIR__, 2) . '/public/uploads');
+
+        if ($base === false) {
+            return false;
+        }
+
+        $path = realpath($base . '/' . $file);
+
+        if (
+            $path === false ||
+            !str_starts_with($path, $base . DIRECTORY_SEPARATOR) ||
+            !is_file($path)
+        ) {
+            return false;
+        }
+
+        return unlink($path);
+    }
+
+    // Read and decode incoming JSON requests.
+    protected function jrequest(): array
+    {
+        if (!str_contains($_SERVER['CONTENT_TYPE'] ?? '', 'application/json')) {
+            http_response_code(415);
+            exit;
+        }
+
+        $data = json_decode(file_get_contents('php://input'), true);
+
+        if (!is_array($data)) {
+            http_response_code(400);
+            exit;
+        }
+
+        return $data;
+    }
+
+    // Send a JSON response.
+    protected function jresponse(array $data, int $statusCode = 200): never
+    {
+        http_response_code($statusCode);
+
+        header('Content-Type: application/json; charset=UTF-8');
+
+        echo json_encode($data, JSON_UNESCAPED_UNICODE);
+
+        exit;
+    }
+    // Redirect to another URL.
+    public function redirect(string $url): never
+    {
+        header("Location:{$url}");
+        exit;
+    }
+    // Require authentication and the specified role.
+    protected function auth(string $role): void
+    {
+        if (!$this->isLoggedIn()) {
+            $this->redirect('/login');
+        }
+
+        if (!$this->checkRole($role)) {
+            $this->redirect('/dashboard');
+        }
+    }
+}

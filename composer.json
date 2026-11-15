@@ -1,0 +1,21 @@
+{
+    "name": "robert/soma",
+    "description": "CBE assessment management system",
+    "type": "project",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Robert Mutua",
+            "email": "robertmutua95@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "vlucas/phpdotenv": "^5.8"
+    }
+}
