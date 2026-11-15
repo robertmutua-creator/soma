@@ -151,7 +151,7 @@ class Controller
                     'title' => 'Admin Dashboard',
                     'totalUsers' => (new User())->count(),
                     'totalSchools' => (new School())->count(),
-                    'contentPage' => 'admin/index',
+                    'content' => 'admin/index',
                 ];
                 $this->view($data);
                 break;

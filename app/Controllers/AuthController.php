@@ -43,4 +43,9 @@ class AuthController extends Controller
             'content' => 'login'
         ]);
     }
+
+    public function loggedIn(): void
+    {
+        $this->dashboard();
+    }
 }
