@@ -2,6 +2,9 @@
 
 namespace App\Core;
 
+use App\Models\School;
+use App\Models\User;
+
 class Controller
 {
     // Render a view through the main layout.
@@ -24,14 +27,14 @@ class Controller
     // Check whether a user is logged in.
     protected function isLoggedIn(): bool
     {
-        return isset($_SESSION['user_id']);
+        return isset($_SESSION['user']);
     }
 
     // Check whether the logged-in user has a specific role.
     protected function checkRole(string $role): bool
     {
         return $this->isLoggedIn()
-            && ($_SESSION['role'] ?? null) === $role;
+            && ($_SESSION['user']['role'] ?? null) === $role;
     }
 
     // Upload a file and return its relative path.
@@ -132,6 +135,31 @@ class Controller
 
         if (!$this->checkRole($role)) {
             $this->redirect('/dashboard');
+        }
+    }
+    public function dashboard(): void
+    {
+        if (!$this->isLoggedIn()) {
+            $this->redirect('/login');
+        }
+
+        $role = $_SESSION['user']['role'] ?? 'unknown';
+
+        switch ($role) {
+            case 'admin':
+                $data = [
+                    'title' => 'Admin Dashboard',
+                    'totalUsers' => (new User())->count(),
+                    'totalSchools' => (new School())->count(),
+                    'contentPage' => 'admin/index',
+                ];
+                $this->view($data);
+                break;
+
+            default:
+                http_response_code(403);
+                echo "Access Denied: Your user role is not recognized or authorized.";
+                break;
         }
     }
 }
