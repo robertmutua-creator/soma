@@ -1,5 +1,6 @@
 <div>
     <form action="/login" method="post">
+        <input type="hidden" name="_token" value="<?= htmlspecialchars($csrfToken) ?>">
         <label for="">Username</label>
         <input type="text" name="username" id="username" placeholder="Username">
         <label for="">Password</label>

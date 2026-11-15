@@ -16,7 +16,14 @@
         <?php if (isset($user) && isset($links)): ?>
             <nav aria-label="Main navigation">
                 <?php foreach ($links as $link): ?>
-                    <a href="<?= htmlspecialchars($link['link']) ?>"><?= htmlspecialchars($link['label']) ?></a>
+                    <?php if ($link['link'] === '/logout'): ?>
+                        <form action="/logout" method="post">
+                            <input type="hidden" name="_token" value="<?= htmlspecialchars($csrfToken) ?>">
+                            <button type="submit"><?= htmlspecialchars($link['label']) ?></button>
+                        </form>
+                    <?php else: ?>
+                        <a href="<?= htmlspecialchars($link['link']) ?>"><?= htmlspecialchars($link['label']) ?></a>
+                    <?php endif; ?>
                 <?php endforeach; ?>
             </nav>
         <?php endif; ?>

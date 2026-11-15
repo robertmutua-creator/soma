@@ -7,7 +7,8 @@ use App\Core\Controller;
 // $router->get('/migrate', [SetupController::class, 'migrate']);
 // $router->get('/seed', [SetupController::class, 'admin']);
 
-// Login Route
+// Auth Route
 $router->get('/login', [AuthController::class, 'login']);
 $router->post('/login', [AuthController::class, 'loginStore']);
 $router->get('/dashboard', [Controller::class, 'dashboard']);
+$router->post('/logout', [AuthController::class, 'logout']);

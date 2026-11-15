@@ -13,6 +13,7 @@ class Controller
         if ($this->isLoggedIn()) {
             $data['links'] = $this->getLinks();
             $data['user'] = $_SESSION['user'];
+            $data['csrfToken'] = $this->token();
         }
         extract($data, EXTR_SKIP);
 
@@ -188,5 +189,23 @@ class Controller
         $links[] = ['link' => '/logout', 'label' => 'Logout'];
 
         return $links;
+    }
+
+    // Generate a CSRF token.
+    protected function token(): string
+    {
+        if (!isset($_SESSION['_token']) || !is_string($_SESSION['_token']) || $_SESSION['_token'] === '') {
+            $_SESSION['_token'] = bin2hex(random_bytes(32));
+        }
+
+        return $_SESSION['_token'];
+    }
+
+    // Validate a CSRF token.
+    protected function validateToken(string $token): bool
+    {
+        return isset($_SESSION['_token'])
+            && is_string($_SESSION['_token'])
+            && hash_equals($_SESSION['_token'], $token);
     }
 }
