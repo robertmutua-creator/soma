@@ -18,7 +18,7 @@
                 <?php foreach ($links as $link): ?>
                     <?php if ($link['link'] === '/logout'): ?>
                         <form action="/logout" method="post">
-                            <input type="hidden" name="_token" value="<?= htmlspecialchars($csrfToken) ?>">
+                            <input type="hidden" name="_token" value="<?= htmlspecialchars($token ?? '') ?>">
                             <button type="submit"><?= htmlspecialchars($link['label']) ?></button>
                         </form>
                     <?php else: ?>
