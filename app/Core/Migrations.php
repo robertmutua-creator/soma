@@ -41,6 +41,30 @@ class Migrations
 
                     FOREIGN KEY (school_id) REFERENCES schools(id)
                     ON DELETE SET NULL
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
+
+                // Classes
+                "CREATE TABLE IF NOT EXISTS classes (
+                    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                    school_id BIGINT UNSIGNED NOT NULL,
+                    code varchar(50) NOT NULL,
+                    name varchar(255) NOT NULL,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                    FOREIGN KEY (school_id) REFERENCES schools(id),
+                    UNIQUE(school_id,code)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
+
+                // Subjects
+                "CREATE TABLE IF NOT EXISTS subjects (
+                    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                    school_id BIGINT UNSIGNED NOT NULL,
+                    code varchar(50) NOT NULL,
+                    name varchar(255) NOT NULL,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                    FOREIGN KEY (school_id) REFERENCES schools(id),
+                    UNIQUE(school_id,code)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
 
             ];
