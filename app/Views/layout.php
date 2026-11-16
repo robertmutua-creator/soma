@@ -29,24 +29,26 @@
             </nav>
         <?php endif; ?>
 
-        <h3><?= htmlspecialchars($title ?? 'Soma Module') ?></h3>
-        <?php
-        if (isset($_SESSION['flash'])) {
-            $flash = $_SESSION['flash'];
+        <div class="content">
+            <h2><?= htmlspecialchars($title ?? 'Soma Module') ?></h2>
+            <?php
+            if (isset($_SESSION['flash'])) {
+                $flash = $_SESSION['flash'];
 
-            echo "<p class='alert " . htmlspecialchars($flash['type']) . "'>"
-                . htmlspecialchars($flash['message']) . "</p>";
+                echo "<p class='alert " . htmlspecialchars($flash['type']) . "'>"
+                    . htmlspecialchars($flash['message']) . "</p>";
 
-            unset($_SESSION['flash']);
-        }
-        ?>
-        <?php
-        if (isset($content) && !empty($content)) {
-            require dirname(__DIR__) . '/Views/' . $content . '.php';
-        } else {
-            echo 'Content Not Set';
-        }
-        ?>
+                unset($_SESSION['flash']);
+            }
+            ?>
+            <?php
+            if (isset($content) && !empty($content)) {
+                require dirname(__DIR__) . '/Views/' . $content . '.php';
+            } else {
+                echo 'Content Not Set';
+            }
+            ?>
+        </div>
     </main>
 
     <footer>
