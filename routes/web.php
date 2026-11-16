@@ -1,5 +1,6 @@
 <?php
 
+use App\Controllers\Admin\SchoolAdminsController;
 use App\Controllers\Admin\SchoolController;
 use App\Controllers\AuthController;
 use App\Controllers\SetupController;
@@ -19,3 +20,8 @@ $router->post('/logout', [AuthController::class, 'logout']);
 $router->get('/schools', [SchoolController::class, 'index']);
 $router->post('/schools/save', [SchoolController::class, 'save']);
 $router->post('/schools/delete', [SchoolController::class, 'delete']);
+
+// School Admins Management
+$router->get('/admins', [SchoolAdminsController::class, 'index']);
+$router->post('/admins/save', [SchoolAdminsController::class, 'save']);
+$router->post('/admins/delete', [SchoolAdminsController::class, 'delete']);

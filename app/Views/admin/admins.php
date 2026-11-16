@@ -22,6 +22,7 @@
 
             <label for="">School Admin Profile</label>
             <input type="file" name="profile" id="profile">
+            <button type="submit"><?= (isset($admin) && !empty($admin)) ? 'Update' : 'Save' ?></button>
         </form>
     </div>
 </div>

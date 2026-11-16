@@ -183,6 +183,7 @@ class Controller
         switch ($role) {
             case 'admin':
                 $links[] = ['link' => '/schools', 'label' => 'Manage Schools'];
+                $links[] = ['link' => '/admins', 'label' => 'Manage School Admins'];
                 break;
         }
 
