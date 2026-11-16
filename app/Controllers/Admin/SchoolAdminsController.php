@@ -29,7 +29,7 @@ class SchoolAdminsController extends Controller
 
             if (!$admin) {
                 $this->flash('error', 'Admin not found.');
-                $this->redirect('/admins');
+                $this->redirect('/admin/admins');
             }
         }
 
@@ -47,7 +47,7 @@ class SchoolAdminsController extends Controller
     {
         if (!$this->validateToken($_POST['_token'] ?? '')) {
             $this->flash('error', 'Invalid security token.');
-            $this->redirect('/admins');
+            $this->redirect('/admin/admins');
         }
 
         $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
@@ -57,7 +57,7 @@ class SchoolAdminsController extends Controller
 
         if ($school_id === '' || $name === '' || $username === '') {
             $this->flash('error', 'School, name and username are required.');
-            $this->redirect('/admins');
+            $this->redirect('/admin/admins');
         }
 
         $data = [
@@ -73,7 +73,7 @@ class SchoolAdminsController extends Controller
             $existing = $this->user->find($id);
             if (!$existing) {
                 $this->flash('error', 'User not found.');
-                $this->redirect('/admins');
+                $this->redirect('/admin/admins');
             }
             $data['profile_photo'] = $existing['profile_photo'] ?? null;
         }
@@ -82,13 +82,13 @@ class SchoolAdminsController extends Controller
         if (isset($_FILES['profile']) && $_FILES['profile']['error'] !== UPLOAD_ERR_NO_FILE) {
             if (getimagesize($_FILES['profile']['tmp_name']) === false) {
                 $this->flash('error', 'Please upload a valid image.');
-                $this->redirect('/admins');
+                $this->redirect('/admin/admins');
             }
 
             $profile = $this->uploadFile($_FILES['profile'], 'schools');
             if ($profile === false) {
                 $this->flash('error', 'Profile upload failed.');
-                $this->redirect('/admins');
+                $this->redirect('/admin/admins');
             }
 
             $data['profile_photo'] = $profile;
@@ -113,27 +113,27 @@ class SchoolAdminsController extends Controller
             $this->flash('success', 'School Admin created successfully.');
         }
 
-        $this->redirect('/admins');
+        $this->redirect('/admin/admins');
     }
 
     public function delete(): void
     {
         if (!$this->validateToken($_POST['_token'] ?? '')) {
             $this->flash('error', 'Invalid security token.');
-            $this->redirect('/admins');
+            $this->redirect('/admin/admins');
         }
 
         $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
 
         if (!$id) {
             $this->flash('error', 'Invalid admin ID.');
-            $this->redirect('/admins');
+            $this->redirect('/admin/admins');
         }
 
         $admin = $this->user->find($id);
         if (!$admin) {
             $this->flash('error', 'Admin not found.');
-            $this->redirect('/admins');
+            $this->redirect('/admin/admins');
         }
 
         if ($this->user->delete($id)) {
@@ -145,6 +145,6 @@ class SchoolAdminsController extends Controller
             $this->flash('error', 'Failed to delete admin.');
         }
 
-        $this->redirect('/admins');
+        $this->redirect('/admin/admins');
     }
 }

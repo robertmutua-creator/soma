@@ -210,7 +210,6 @@ class Controller
                 $links[] = ['link' => '/school/teachers', 'label' => 'Manage Teachers'];
                 break;
         }
-
         $links[] = ['link' => '/logout', 'label' => 'Logout'];
 
         return $links;
