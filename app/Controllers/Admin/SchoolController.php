@@ -24,7 +24,7 @@ class SchoolController extends Controller
 
             if (!$school) {
                 $this->flash('error', 'School not found.');
-                $this->redirect('/schools');
+                $this->redirect('/admin/schools');
             }
         }
         $schools = $this->school->all();
@@ -42,7 +42,7 @@ class SchoolController extends Controller
     {
         if (!$this->validateToken($_POST['_token'] ?? '')) {
             $this->flash('error', 'Invalid security token.');
-            $this->redirect('/schools');
+            $this->redirect('/admin/schools');
         }
 
         $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
@@ -53,12 +53,12 @@ class SchoolController extends Controller
 
         if ($code === '' || $name === '' || $address === '') {
             $this->flash('error', 'School code, name and address are required.');
-            $this->redirect('/schools');
+            $this->redirect('/admin/schools');
         }
 
         if (!in_array($status, ['active', 'inactive'], true)) {
             $this->flash('error', 'Invalid school status.');
-            $this->redirect('/schools');
+            $this->redirect('/admin/schools');
         }
 
         $data = [
@@ -73,7 +73,7 @@ class SchoolController extends Controller
             $existing = $this->school->find($id);
             if (!$existing) {
                 $this->flash('error', 'School not found.');
-                $this->redirect('/schools');
+                $this->redirect('/admin/schools');
             }
             $data['logo'] = $existing['logo'] ?? null;
         }
@@ -82,13 +82,13 @@ class SchoolController extends Controller
         if (isset($_FILES['logo']) && $_FILES['logo']['error'] !== UPLOAD_ERR_NO_FILE) {
             if (getimagesize($_FILES['logo']['tmp_name']) === false) {
                 $this->flash('error', 'Please upload a valid image.');
-                $this->redirect('/schools');
+                $this->redirect('/admin/schools');
             }
 
             $logo = $this->uploadFile($_FILES['logo'], 'schools');
             if ($logo === false) {
                 $this->flash('error', 'Logo upload failed.');
-                $this->redirect('/schools');
+                $this->redirect('/admin/schools');
             }
 
             $data['logo'] = $logo;
@@ -113,27 +113,27 @@ class SchoolController extends Controller
             $this->flash('success', 'School created successfully.');
         }
 
-        $this->redirect('/schools');
+        $this->redirect('/admin/schools');
     }
 
     public function delete(): void
     {
         if (!$this->validateToken($_POST['_token'] ?? '')) {
             $this->flash('error', 'Invalid security token.');
-            $this->redirect('/schools');
+            $this->redirect('/admin/schools');
         }
 
         $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
 
         if (!$id) {
             $this->flash('error', 'Invalid school ID.');
-            $this->redirect('/schools');
+            $this->redirect('/admin/schools');
         }
 
         $school = $this->school->find($id);
         if (!$school) {
             $this->flash('error', 'School not found.');
-            $this->redirect('/schools');
+            $this->redirect('/admin/schools');
         }
 
         if ($this->school->delete($id)) {
@@ -145,6 +145,6 @@ class SchoolController extends Controller
             $this->flash('error', 'Failed to delete school.');
         }
 
-        $this->redirect('/schools');
+        $this->redirect('/admin/schools');
     }
 }

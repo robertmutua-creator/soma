@@ -1,6 +1,6 @@
 <div class="data">
     <div class="form">
-        <form action="/schools/save" method="post" enctype="multipart/form-data">
+        <form action="/admin/schools/save" method="post" enctype="multipart/form-data">
             <input type="hidden" name="_token" value="<?= htmlspecialchars($token ?? '') ?>">
             <input type="hidden" name="id" value="<?= htmlspecialchars($school['id'] ?? '') ?>">
             <label for="">School Code</label>
