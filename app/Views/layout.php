@@ -31,13 +31,15 @@
 
         <h3><?= htmlspecialchars($title ?? 'Soma Module') ?></h3>
         <?php
-        $flash = $_SESSION['flash'] ?? null;
-        unset($_SESSION['flash']);
+        if (isset($_SESSION['flash'])) {
+            $flash = $_SESSION['flash'];
 
-        if (is_array($flash) && isset($flash['type'], $flash['message'])):
+            echo "<p class='alert " . htmlspecialchars($flash['type']) . "'>"
+                . htmlspecialchars($flash['message']) . "</p>";
+
+            unset($_SESSION['flash']);
+        }
         ?>
-            <p role="alert"><?= htmlspecialchars($flash['message']) ?></p>
-        <?php endif; ?>
         <?php
         if (isset($content) && !empty($content)) {
             require dirname(__DIR__) . '/Views/' . $content . '.php';

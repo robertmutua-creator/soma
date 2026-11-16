@@ -63,7 +63,7 @@ class AuthController extends Controller
         $this->view([
             'title' => 'Soma - Login',
             'content' => 'login',
-            'csrfToken' => $this->token(),
+            'token' => $this->token(),
         ]);
     }
 

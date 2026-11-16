@@ -122,6 +122,16 @@ main:has(.login) .login {
     flex: 1;
 }
 
+.alert{
+   font-style: italic; 
+}
+.alert.success{
+    color: green;
+}
+.alert.error{
+    color: red;
+}
+
 /* Mobile */
 @media (max-width: 768px) {
     main {
