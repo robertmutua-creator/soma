@@ -208,4 +208,15 @@ class Controller
             && is_string($_SESSION['_token'])
             && hash_equals($_SESSION['_token'], $token);
     }
+
+    // Format input
+    protected function format(string $text, string $case): string
+    {
+        return match (strtolower(trim($case))) {
+            'upper', 'uppercase' => mb_strtoupper($text, 'UTF-8'),
+            'lower', 'lowercase' => mb_strtolower($text, 'UTF-8'),
+            'title', 'titlecase' => mb_convert_case($text, MB_CASE_TITLE, 'UTF-8'),
+            default => $text,
+        };
+    }
 }
