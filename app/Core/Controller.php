@@ -2,7 +2,9 @@
 
 namespace App\Core;
 
+use App\Models\Classes;
 use App\Models\School;
+use App\Models\Subjects;
 use App\Models\User;
 
 class Controller
@@ -142,6 +144,11 @@ class Controller
             $this->redirect('/dashboard');
         }
     }
+
+    protected function schoolid(): bool
+    {
+        return isset($_SESSION['user']) ? $_SESSION['user']['school_id'] : false;
+    }
     public function dashboard(): void
     {
         if (!$this->isLoggedIn()) {
@@ -157,6 +164,17 @@ class Controller
                     'totalUsers' => (new User())->count(),
                     'totalSchools' => (new School())->count(),
                     'content' => 'admin/index',
+                ];
+                $this->view($data);
+                break;
+            case 'school':
+                $data = [
+                    'title' => 'School Admin Dashboard',
+                    'totalStudents' => new User($this->schoolid())->count(['role' => 'student']),
+                    'totalTeachers' => new User($this->schoolid())->count(['role' => 'teacher']),
+                    'totalStrams' => new Classes($this->schoolid())->count(),
+                    'totalSubjects' => new Subjects($this->schoolid())->count(),
+                    'content' => 'schools/index',
                 ];
                 $this->view($data);
                 break;
@@ -184,6 +202,12 @@ class Controller
             case 'admin':
                 $links[] = ['link' => '/schools', 'label' => 'Manage Schools'];
                 $links[] = ['link' => '/admins', 'label' => 'Manage School Admins'];
+                break;
+            case 'school':
+                $links[] = ['link' => '/classes', 'label' => 'Manage Streams'];
+                $links[] = ['link' => '/subjects', 'label' => 'Manage Subjects'];
+                $links[] = ['link' => '/students', 'label' => 'Manage Students'];
+                $links[] = ['link' => '/teachers', 'label' => 'Manage Teachers'];
                 break;
         }
 
