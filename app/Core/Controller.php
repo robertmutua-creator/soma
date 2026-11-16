@@ -172,7 +172,7 @@ class Controller
                     'title' => 'School Admin Dashboard',
                     'totalStudents' => new User($this->schoolid())->count(['role' => 'student']),
                     'totalTeachers' => new User($this->schoolid())->count(['role' => 'teacher']),
-                    'totalStrams' => new Classes($this->schoolid())->count(),
+                    'totalStreams' => new Classes($this->schoolid())->count(),
                     'totalSubjects' => new Subjects($this->schoolid())->count(),
                     'content' => 'schools/index',
                 ];

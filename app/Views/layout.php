@@ -11,7 +11,7 @@
 <body>
     <header>
         <div><?= htmlspecialchars($user['name'] ?? 'Soma') ?></div>
-        <div><img src="/uploads/<?= htmlspecialchars($user['profile'] ?? 'avatar.jpeg') ?>" alt=""></div>
+        <div><img src="/uploads/<?= htmlspecialchars($user['profile_photo'] ?? 'avatar.jpeg') ?>" alt=""></div>
     </header>
     <main>
         <?php if (isset($user) && isset($links)): ?>
