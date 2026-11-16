@@ -54,7 +54,7 @@ class TeachersController extends Controller
         }
 
         $data = [
-            'username' => $username,
+            'username' => $this->format($username, 'upper'),
             'name' => $this->format($name, 'title'),
             'role' => 'teacher',
             'password' => password_hash($username, PASSWORD_DEFAULT),
