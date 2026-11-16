@@ -31,7 +31,7 @@ class ClassesController extends Controller
         $classes = $this->class->all();
         $this->view([
             'title' => 'Manage Classes',
-            'content' => 'school/classes',
+            'content' => 'schools/classes',
             'class' => $class,
             'classes' => $classes,
             'token' => $this->token()
@@ -79,6 +79,7 @@ class ClassesController extends Controller
         } else {
             $this->flash('error', 'Failed to register class.');
         }
+        $this->redirect('/school/classes');
     }
 
     public function delete(): void
@@ -105,5 +106,6 @@ class ClassesController extends Controller
         } else {
             $this->flash('error', 'Failed to delete class.');
         }
+        $this->redirect('/school/classes');
     }
 }

@@ -30,6 +30,6 @@ $router->post('/admin/admins/delete', [SchoolAdminsController::class, 'delete'])
 
 // Schools
 // Classes Management
-$router->get('/schools/classes', [ClassesController::class, 'index']);
-$router->post('/schools/classes/save', [ClassesController::class, 'save']);
-$router->post('/schools/classes/delete', [ClassesController::class, 'delete']);
+$router->get('/school/classes', [ClassesController::class, 'index']);
+$router->post('/school/classes/save', [ClassesController::class, 'save']);
+$router->post('/school/classes/delete', [ClassesController::class, 'delete']);

@@ -200,14 +200,14 @@ class Controller
 
         switch ($role) {
             case 'admin':
-                $links[] = ['link' => '/schools', 'label' => 'Manage Schools'];
-                $links[] = ['link' => '/admins', 'label' => 'Manage School Admins'];
+                $links[] = ['link' => '/admin/schools', 'label' => 'Manage Schools'];
+                $links[] = ['link' => '/admin/admins', 'label' => 'Manage School Admins'];
                 break;
             case 'school':
-                $links[] = ['link' => '/classes', 'label' => 'Manage Streams'];
-                $links[] = ['link' => '/subjects', 'label' => 'Manage Subjects'];
-                $links[] = ['link' => '/students', 'label' => 'Manage Students'];
-                $links[] = ['link' => '/teachers', 'label' => 'Manage Teachers'];
+                $links[] = ['link' => '/school/classes', 'label' => 'Manage Streams'];
+                $links[] = ['link' => '/school/subjects', 'label' => 'Manage Subjects'];
+                $links[] = ['link' => '/school/students', 'label' => 'Manage Students'];
+                $links[] = ['link' => '/school/teachers', 'label' => 'Manage Teachers'];
                 break;
         }
 
