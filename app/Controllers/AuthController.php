@@ -74,7 +74,7 @@ class AuthController extends Controller
         }
 
         $token = $_POST['_token'] ?? null;
-        if (!is_string($token) || !$this->validateToken($token)) {
+        if (!$this->validateToken($token)) {
             http_response_code(403);
             exit('Invalid CSRF token.');
         }

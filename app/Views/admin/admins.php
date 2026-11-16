@@ -1,6 +1,6 @@
 <div class="data">
     <div class="form">
-        <form action="/admins/save" method="post" enctype="multipart/form-data">
+        <form action="/admin/admins/save" method="post" enctype="multipart/form-data">
             <input type="hidden" name="_token" value="<?= htmlspecialchars($token ?? '') ?>">
 
             <input type="hidden" name="id" value="<?= htmlspecialchars($admin['id'] ?? '') ?>">
@@ -56,8 +56,8 @@
                             <td><?= htmlspecialchars($adm['role']) ?></td>
                             <td><?= htmlspecialchars($adm['school']) ?></td>
                             <td>
-                                <a href="/admins?id=<?= htmlspecialchars($adm['id']) ?>">Edit</a>
-                                <form action="/admins/delete" method="post" onsubmit="return confirm('Are you sure you want to delete this admin?');">
+                                <a href="/admin/admins?id=<?= htmlspecialchars($adm['id']) ?>">Edit</a>
+                                <form action="/admin/admins/delete" method="post" onsubmit="return confirm('Are you sure you want to delete this admin?');">
                                     <input type="hidden" name="_token" value="<?= htmlspecialchars($token ?? '') ?>">
                                     <input type="hidden" name="_action" value="delete">
                                     <input type="hidden" name="id" value="<?= htmlspecialchars($adm['id']) ?>">

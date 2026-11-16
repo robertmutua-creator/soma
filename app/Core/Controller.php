@@ -15,7 +15,7 @@ class Controller
         if ($this->isLoggedIn()) {
             $data['links'] = $this->getLinks();
             $data['user'] = $_SESSION['user'];
-            $data['csrfToken'] = $this->token();
+            $data['token'] = $this->token();
         }
         extract($data, EXTR_SKIP);
 
