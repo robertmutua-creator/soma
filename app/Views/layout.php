@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($title ?? 'Soma') ?></title>
+    <link rel="stylesheet" href="/assets/css/app.css">
 </head>
 
 <body>
@@ -28,7 +29,7 @@
             </nav>
         <?php endif; ?>
 
-        <h1><?= htmlspecialchars($title ?? 'Soma Module') ?></h1>
+        <h3><?= htmlspecialchars($title ?? 'Soma Module') ?></h3>
         <?php
         $flash = $_SESSION['flash'] ?? null;
         unset($_SESSION['flash']);
@@ -48,6 +49,7 @@
 
     <footer>
         Software by MutuaSoftwares <?= date('Y') ?>
+        <script src="/assets/scripts/app.js"></script>
     </footer>
 </body>
 

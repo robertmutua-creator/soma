@@ -1,4 +1,4 @@
-<div>
+<div class="login">
     <form action="/login" method="post">
         <input type="hidden" name="_token" value="<?= htmlspecialchars($token ?? '') ?>">
         <label for="">Username</label>
