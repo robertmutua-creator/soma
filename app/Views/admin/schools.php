@@ -51,7 +51,7 @@
                             <td><?= htmlspecialchars($sch['status']) ?></td>
                             <td>
                                 <a href="/schools?id=<?= htmlspecialchars($sch['id']) ?>">Edit</a>
-                                <form action="/schools/delete" method="post">
+                                <form action="/schools/delete" method="post" onsubmit="return confirm('Are you sure you want to delete this school?');">
                                     <input type="hidden" name="_token" value="<?= htmlspecialchars($token ?? '') ?>">
                                     <input type="hidden" name="_action" value="delete">
                                     <input type="hidden" name="id" value="<?= htmlspecialchars($sch['id']) ?>">

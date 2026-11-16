@@ -116,15 +116,14 @@ class SchoolController extends Controller
         $this->redirect('/schools');
     }
 
-    // Delete a school
     public function delete(): void
     {
-        if (!$this->validateToken($_POST['_token'])) {
+        if (!$this->validateToken($_POST['_token'] ?? '')) {
             $this->flash('error', 'Invalid security token.');
             $this->redirect('/schools');
         }
 
-        $id = filter_var(INPUT_POST, 'id', FILTER_VALIDATE_INT);
+        $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
 
         if (!$id) {
             $this->flash('error', 'Invalid school ID.');
@@ -143,8 +142,9 @@ class SchoolController extends Controller
             }
             $this->flash('success', 'School deleted successfully.');
         } else {
-            $this->flash('error', 'Failed to delete school');
+            $this->flash('error', 'Failed to delete school.');
         }
+
         $this->redirect('/schools');
     }
 }
