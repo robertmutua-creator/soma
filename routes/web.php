@@ -4,6 +4,7 @@ use App\Controllers\Admin\SchoolAdminsController;
 use App\Controllers\Admin\SchoolController;
 use App\Controllers\AuthController;
 use App\Controllers\School\ClassesController;
+use App\Controllers\School\SubjectsController;
 use App\Controllers\SetupController;
 use App\Core\Controller;
 
@@ -33,3 +34,8 @@ $router->post('/admin/admins/delete', [SchoolAdminsController::class, 'delete'])
 $router->get('/school/classes', [ClassesController::class, 'index']);
 $router->post('/school/classes/save', [ClassesController::class, 'save']);
 $router->post('/school/classes/delete', [ClassesController::class, 'delete']);
+
+// Subjects Management
+$router->get('/school/subjects', [SubjectsController::class, 'index']);
+$router->post('/school/subjects/save', [SubjectsController::class, 'save']);
+$router->post('/school/subjects/delete', [SubjectsController::class, 'delete']);
