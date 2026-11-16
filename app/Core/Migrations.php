@@ -29,6 +29,7 @@ class Migrations
                 // Users table
                 "CREATE TABLE IF NOT EXISTS users (
                     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                    name varchar(255) NOT NULL,
                     school_id BIGINT UNSIGNED NULL,
                     username VARCHAR(100) NOT NULL UNIQUE,
                     password VARCHAR(255) NOT NULL,
