@@ -17,7 +17,7 @@ class SubjectsController extends Controller
     // Display subjects and load subject for editing
     public function index(): void
     {
-        $class = null;
+        $subject = null;
         $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
         if ($id !== null && $id !== false) {
             $subject = $this->subject->find($id);
