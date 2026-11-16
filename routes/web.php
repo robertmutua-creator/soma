@@ -3,6 +3,7 @@
 use App\Controllers\Admin\SchoolAdminsController;
 use App\Controllers\Admin\SchoolController;
 use App\Controllers\AuthController;
+use App\Controllers\School\ClassesController;
 use App\Controllers\SetupController;
 use App\Core\Controller;
 
@@ -17,11 +18,18 @@ $router->post('/logout', [AuthController::class, 'logout']);
 
 
 // Schools Management
-$router->get('/schools', [SchoolController::class, 'index']);
-$router->post('/schools/save', [SchoolController::class, 'save']);
-$router->post('/schools/delete', [SchoolController::class, 'delete']);
+$router->get('/admin/schools', [SchoolController::class, 'index']);
+$router->post('/admin/schools/save', [SchoolController::class, 'save']);
+$router->post('/admin/schools/delete', [SchoolController::class, 'delete']);
 
 // School Admins Management
-$router->get('/admins', [SchoolAdminsController::class, 'index']);
-$router->post('/admins/save', [SchoolAdminsController::class, 'save']);
-$router->post('/admins/delete', [SchoolAdminsController::class, 'delete']);
+$router->get('/admin/admins', [SchoolAdminsController::class, 'index']);
+$router->post('/admin/admins/save', [SchoolAdminsController::class, 'save']);
+$router->post('/admin/admins/delete', [SchoolAdminsController::class, 'delete']);
+
+
+// Schools
+// Classes Management
+$router->get('/schools/classes', [ClassesController::class, 'index']);
+$router->post('/schools/classes/save', [ClassesController::class, 'save']);
+$router->post('/schools/classes/delete', [ClassesController::class, 'delete']);
