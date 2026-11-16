@@ -5,6 +5,15 @@
 
             <input type="hidden" name="id" value="<?= htmlspecialchars($admin['id'] ?? '') ?>">
 
+            <label for="">Select School</label>
+            <select name="school_id" id="school_id">
+                <option value="">Select School</option>
+                <?php if (isset($schools)): ?>
+                    <?php foreach ($schools as $sch): ?>
+                        <option value="<?= $sch['id'] ?>"><?= htmlspecialchars($sch['name']) ?></option>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </select>
             <label for="">School Admin Name</label>
             <input type="text" name="name" id="name" placeholder="Mr Mutua" value="<?= htmlspecialchars($admin['name'] ?? '') ?>">
 
