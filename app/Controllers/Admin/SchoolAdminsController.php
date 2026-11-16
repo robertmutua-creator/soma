@@ -21,7 +21,7 @@ class SchoolAdminsController extends Controller
     public function index(): void
     {
         $schools = $this->school->all();
-        $admins = $this->user->all(['role' => 'school']);
+        $admins = $this->user->getAdmins();
         $admin = null;
         $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
         if ($id !== null && $id !== false) {

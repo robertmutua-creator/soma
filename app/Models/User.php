@@ -24,4 +24,17 @@ class User extends Model
             return false;
         }
     }
+
+    public function getAdmins(): array|false
+    {
+        try {
+            $stmt = $this->db->prepare("SELECT u.*, s.name as school FROM users u JOIN schools s ON u.school_id = s.id WHERE u.role = 'school'");
+            $stmt->execute();
+            $admins = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return $admins ?: false;
+        } catch (PDOException $e) {
+            error_log($e->getMessage());
+            return false;
+        }
+    }
 }

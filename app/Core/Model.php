@@ -59,15 +59,24 @@ class Model
     }
 
     // Retrieve all records.
-    public function all(): array
+    public function all(array $criteria = []): array
     {
         $sql = "SELECT * FROM {$this->table}";
-
         $params = [];
+        $whereClauses = [];
 
-        if ($this->schoolId !== null) {
-            $sql .= " WHERE school_id = :school_id";
-            $params['school_id'] = $this->schoolId;
+        // If the model has a default schoolId set, include it if not overridden
+        if ($this->schoolId !== null && !array_key_exists('school_id', $criteria)) {
+            $criteria['school_id'] = $this->schoolId;
+        }
+
+        // Build WHERE clauses dynamically from the criteria array
+        if (!empty($criteria)) {
+            foreach ($criteria as $column => $value) {
+                $whereClauses[] = "{$column} = :{$column}";
+                $params[$column] = $value;
+            }
+            $sql .= " WHERE " . implode(" AND ", $whereClauses);
         }
 
         $stmt = $this->db->prepare($sql);
