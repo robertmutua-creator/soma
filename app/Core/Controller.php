@@ -145,9 +145,11 @@ class Controller
         }
     }
 
-    protected function schoolid(): bool
+    protected function schoolid(): ?int
     {
-        return isset($_SESSION['user']) ? $_SESSION['user']['school_id'] : false;
+        return isset($_SESSION['user']['school_id'])
+            ? (int) $_SESSION['user']['school_id']
+            : null;
     }
     public function dashboard(): void
     {
