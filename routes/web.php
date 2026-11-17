@@ -7,6 +7,7 @@ use App\Controllers\School\ClassesController;
 use App\Controllers\School\StudentsController;
 use App\Controllers\School\SubjectsController;
 use App\Controllers\School\TeachersController;
+use App\Controllers\School\TermsController;
 use App\Controllers\School\YearsController;
 use App\Controllers\SetupController;
 use App\Core\Controller;
@@ -59,3 +60,8 @@ $router->post('/school/students/delete', [StudentsController::class, 'delete']);
 $router->get('/school/years', [YearsController::class, 'index']);
 $router->post('/school/years/save', [YearsController::class, 'save']);
 $router->post('/school/years/delete', [YearsController::class, 'delete']);
+
+// Terms Management
+$router->get('/school/terms', [TermsController::class, 'index']);
+$router->post('/school/terms/save', [TermsController::class, 'save']);
+$router->post('/school/terms/delete', [TermsController::class, 'delete']);

@@ -89,6 +89,21 @@ class Migrations
                     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                     CONSTRAINT fk_years_school FOREIGN KEY (school_id) REFERENCES schools(id) ON DELETE CASCADE,
                     UNIQUE KEY uq_years_school_year (school_id, year)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;",
+
+                "CREATE TABLE IF NOT EXISTS terms (
+                    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                    school_id BIGINT UNSIGNED NOT NULL,
+                    year_id BIGINT UNSIGNED NOT NULL,
+                    name VARCHAR(50) NOT NULL,
+                    status ENUM('active', 'closed', 'upcoming') NOT NULL DEFAULT 'upcoming',
+                    start_date DATE NULL,
+                    end_date DATE NULL,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                    CONSTRAINT fk_terms_school FOREIGN KEY (school_id) REFERENCES schools(id) ON DELETE CASCADE,
+                    CONSTRAINT fk_terms_year FOREIGN KEY (year_id) REFERENCES years(id) ON DELETE CASCADE,
+                    UNIQUE KEY uq_terms_school_year_name (school_id, year_id, name)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;"
 
             ];

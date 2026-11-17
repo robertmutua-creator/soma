@@ -5,6 +5,7 @@ namespace App\Core;
 use App\Models\Classes;
 use App\Models\School;
 use App\Models\Subjects;
+use App\Models\Terms;
 use App\Models\User;
 use App\Models\Years;
 
@@ -178,6 +179,7 @@ class Controller
                     'totalStreams' => new Classes($this->schoolid())->count(),
                     'totalSubjects' => new Subjects($this->schoolid())->count(),
                     'currentYear' => (new Years($this->schoolid()))->all(['status' => 'active']),
+                    'currentTerm' => (new Terms($this->schoolid()))->all(['status' => 'active']),
                     'content' => 'schools/index',
                 ];
                 $this->view($data);
@@ -213,6 +215,7 @@ class Controller
                 $links[] = ['link' => '/school/students', 'label' => 'Manage Students'];
                 $links[] = ['link' => '/school/teachers', 'label' => 'Manage Teachers'];
                 $links[] = ['link' => '/school/years', 'label' => 'Manage Academic Years'];
+                $links[] = ['link' => '/school/terms', 'label' => 'Manage Terms'];
                 break;
         }
         $links[] = ['link' => '/logout', 'label' => 'Logout'];
