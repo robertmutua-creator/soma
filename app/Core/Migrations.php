@@ -54,29 +54,30 @@ class Migrations
 
                     UNIQUE KEY uq_school_adm (school_id, adm),
                     INDEX idx_school_role (school_id, role)
-                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;",
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;",
+
                 // Classes
                 "CREATE TABLE IF NOT EXISTS classes (
                     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
                     school_id BIGINT UNSIGNED NOT NULL,
-                    code varchar(50) NOT NULL,
-                    name varchar(255) NOT NULL,
+                    code VARCHAR(50) NOT NULL,
+                    name VARCHAR(255) NOT NULL,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                    FOREIGN KEY (school_id) REFERENCES schools(id),
-                    UNIQUE(school_id,code)
+                    FOREIGN KEY (school_id) REFERENCES schools(id) ON DELETE CASCADE,
+                    UNIQUE(school_id, code)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
 
                 // Subjects
                 "CREATE TABLE IF NOT EXISTS subjects (
                     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
                     school_id BIGINT UNSIGNED NOT NULL,
-                    code varchar(50) NOT NULL,
-                    name varchar(255) NOT NULL,
+                    code VARCHAR(50) NOT NULL,
+                    name VARCHAR(255) NOT NULL,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                    FOREIGN KEY (school_id) REFERENCES schools(id),
-                    UNIQUE(school_id,code)
+                    FOREIGN KEY (school_id) REFERENCES schools(id) ON DELETE CASCADE,
+                    UNIQUE(school_id, code)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
 
                 // Years Table
@@ -88,9 +89,11 @@ class Migrations
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                     CONSTRAINT fk_years_school FOREIGN KEY (school_id) REFERENCES schools(id) ON DELETE CASCADE,
-                    UNIQUE KEY uq_years_school_year (school_id, year)
+                    UNIQUE KEY uq_years_school_year (school_id, year),
+                    INDEX idx_years_school_status (school_id, status)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;",
 
+                // Terms Table
                 "CREATE TABLE IF NOT EXISTS terms (
                     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
                     school_id BIGINT UNSIGNED NOT NULL,
@@ -103,9 +106,9 @@ class Migrations
                     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                     CONSTRAINT fk_terms_school FOREIGN KEY (school_id) REFERENCES schools(id) ON DELETE CASCADE,
                     CONSTRAINT fk_terms_year FOREIGN KEY (year_id) REFERENCES years(id) ON DELETE CASCADE,
-                    UNIQUE KEY uq_terms_school_year_name (school_id, year_id, name)
-                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;"
-
+                    UNIQUE KEY uq_terms_school_year_name (school_id, year_id, name),
+                    INDEX idx_terms_school_status (school_id, status)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;",
             ];
 
             foreach ($sql as $query) {
