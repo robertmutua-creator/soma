@@ -1,5 +1,10 @@
 <div class="cards">
     <div class="card">
+        <h4>Current Year</h4>
+        <h3><?= htmlspecialchars($currentYear[0]['year'] ?? 'Not Set') ?></h3>
+        <p>Current Academic Year</p>
+    </div>
+    <div class="card">
         <h4>Students</h4>
         <h3><?= htmlspecialchars($totalStudents ?? '--') ?></h3>
         <p>Total Active Students</p>

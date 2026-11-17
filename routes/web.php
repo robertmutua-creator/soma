@@ -7,10 +7,11 @@ use App\Controllers\School\ClassesController;
 use App\Controllers\School\StudentsController;
 use App\Controllers\School\SubjectsController;
 use App\Controllers\School\TeachersController;
+use App\Controllers\School\YearsController;
 use App\Controllers\SetupController;
 use App\Core\Controller;
 
-// $router->get('/migrate', [SetupController::class, 'migrate']);
+$router->get('/migrate', [SetupController::class, 'migrate']);
 // $router->get('/seed', [SetupController::class, 'admin']);
 
 // Auth Route
@@ -52,3 +53,9 @@ $router->post('/school/teachers/delete', [TeachersController::class, 'delete']);
 $router->get('/school/students', [StudentsController::class, 'index']);
 $router->post('/school/students/save', [StudentsController::class, 'save']);
 $router->post('/school/students/delete', [StudentsController::class, 'delete']);
+
+
+// Academic Years Management
+$router->get('/school/years', [YearsController::class, 'index']);
+$router->post('/school/years/save', [YearsController::class, 'save']);
+$router->post('/school/years/delete', [YearsController::class, 'delete']);

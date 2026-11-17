@@ -6,6 +6,7 @@ use App\Models\Classes;
 use App\Models\School;
 use App\Models\Subjects;
 use App\Models\User;
+use App\Models\Years;
 
 class Controller
 {
@@ -176,6 +177,7 @@ class Controller
                     'totalTeachers' => new User($this->schoolid())->count(['role' => 'teacher']),
                     'totalStreams' => new Classes($this->schoolid())->count(),
                     'totalSubjects' => new Subjects($this->schoolid())->count(),
+                    'currentYear' => (new Years($this->schoolid()))->all(['status' => 'active']),
                     'content' => 'schools/index',
                 ];
                 $this->view($data);
@@ -210,6 +212,7 @@ class Controller
                 $links[] = ['link' => '/school/subjects', 'label' => 'Manage Subjects'];
                 $links[] = ['link' => '/school/students', 'label' => 'Manage Students'];
                 $links[] = ['link' => '/school/teachers', 'label' => 'Manage Teachers'];
+                $links[] = ['link' => '/school/years', 'label' => 'Manage Academic Years'];
                 break;
         }
         $links[] = ['link' => '/logout', 'label' => 'Logout'];
