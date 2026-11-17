@@ -77,6 +77,7 @@ class Model
                 $params[$column] = $value;
             }
             $sql .= " WHERE " . implode(" AND ", $whereClauses);
+            $sql .= " ORDER BY created_at DESC";
         }
 
         $stmt = $this->db->prepare($sql);
