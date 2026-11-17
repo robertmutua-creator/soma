@@ -172,14 +172,17 @@ class Controller
                 $this->view($data);
                 break;
             case 'school':
+                $currentTerm = (new Terms($this->schoolid()))->current();
+                $currentPeriod = $currentTerm
+                    ? $currentTerm['name'] . '/' . $currentTerm['year_name']
+                    : 'Not Set';
                 $data = [
                     'title' => 'School Admin Dashboard',
                     'totalStudents' => new User($this->schoolid())->count(['role' => 'student']),
                     'totalTeachers' => new User($this->schoolid())->count(['role' => 'teacher']),
                     'totalStreams' => new Classes($this->schoolid())->count(),
                     'totalSubjects' => new Subjects($this->schoolid())->count(),
-                    'currentYear' => (new Years($this->schoolid()))->all(['status' => 'active']),
-                    'currentTerm' => (new Terms($this->schoolid()))->all(['status' => 'active']),
+                    'currentPeriod' => $currentPeriod,
                     'content' => 'schools/index',
                 ];
                 $this->view($data);

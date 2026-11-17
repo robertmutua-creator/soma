@@ -1,7 +1,7 @@
 <div class="cards">
     <div class="card">
         <h4>Academic Year</h4>
-        <h3><?= htmlspecialchars($currentTerm[0]['name'] ?? 'Term Not Set') . '/' . htmlspecialchars($currentYear[0]['year'] ?? 'Year Not Set') ?></h3>
+        <h3><?= htmlspecialchars($currentPeriod ?? 'Not Set') ?></h3>
         <p>Current Academic Year</p>
     </div>
     <div class="card">
