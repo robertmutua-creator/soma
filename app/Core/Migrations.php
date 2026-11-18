@@ -16,7 +16,7 @@ class Migrations
 
                 // Schools table
                 "CREATE TABLE IF NOT EXISTS schools (
-                    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
                     code VARCHAR(50) NOT NULL UNIQUE,
                     name VARCHAR(150) NOT NULL,
                     address TEXT NULL,
@@ -28,8 +28,8 @@ class Migrations
 
                 // Users table
                 "CREATE TABLE IF NOT EXISTS users (
-                    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-                    school_id BIGINT UNSIGNED NULL,
+                    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                    school_id INT UNSIGNED NULL,
                     name VARCHAR(255) NOT NULL,
                     username VARCHAR(100) NOT NULL UNIQUE,
                     password VARCHAR(255) NOT NULL,
@@ -58,8 +58,8 @@ class Migrations
 
                 // Classes
                 "CREATE TABLE IF NOT EXISTS classes (
-                    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-                    school_id BIGINT UNSIGNED NOT NULL,
+                    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                    school_id INT UNSIGNED NOT NULL,
                     code VARCHAR(50) NOT NULL,
                     name VARCHAR(255) NOT NULL,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -70,8 +70,8 @@ class Migrations
 
                 // Subjects
                 "CREATE TABLE IF NOT EXISTS subjects (
-                    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-                    school_id BIGINT UNSIGNED NOT NULL,
+                    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                    school_id INT UNSIGNED NOT NULL,
                     code VARCHAR(50) NOT NULL,
                     name VARCHAR(255) NOT NULL,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -82,8 +82,8 @@ class Migrations
 
                 // Years Table
                 "CREATE TABLE IF NOT EXISTS years (
-                    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-                    school_id BIGINT UNSIGNED NOT NULL,
+                    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                    school_id INT UNSIGNED NOT NULL,
                     year VARCHAR(50) NOT NULL,
                     status ENUM('active', 'closed', 'upcoming') NOT NULL DEFAULT 'active',
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -95,9 +95,9 @@ class Migrations
 
                 // Terms Table
                 "CREATE TABLE IF NOT EXISTS terms (
-                    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-                    school_id BIGINT UNSIGNED NOT NULL,
-                    year_id BIGINT UNSIGNED NOT NULL,
+                    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                    school_id INT UNSIGNED NOT NULL,
+                    year_id INT UNSIGNED NOT NULL,
                     name VARCHAR(50) NOT NULL,
                     status ENUM('active', 'closed', 'upcoming') NOT NULL DEFAULT 'upcoming',
                     start_date DATE NULL,
@@ -112,12 +112,12 @@ class Migrations
 
                 // Allocations Table (Teacher-Subject Handover Management)
                 "CREATE TABLE IF NOT EXISTS allocations (
-                    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-                    school_id BIGINT UNSIGNED NOT NULL,
-                    year_id BIGINT UNSIGNED NOT NULL,
-                    class_id BIGINT UNSIGNED NOT NULL,
-                    subject_id BIGINT UNSIGNED NOT NULL,
-                    teacher_id BIGINT UNSIGNED NOT NULL,
+                    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                    school_id INT UNSIGNED NOT NULL,
+                    year_id INT UNSIGNED NOT NULL,
+                    class_id INT UNSIGNED NOT NULL,
+                    subject_id INT UNSIGNED NOT NULL,
+                    teacher_id INT UNSIGNED NOT NULL,
                     from_date DATE NOT NULL,
                     to_date DATE NULL DEFAULT NULL,
                     status ENUM('active', 'closed') NOT NULL DEFAULT 'active',
@@ -133,7 +133,28 @@ class Migrations
                     CONSTRAINT fk_allocations_class FOREIGN KEY (class_id) REFERENCES classes(id) ON DELETE CASCADE,
                     CONSTRAINT fk_allocations_subject FOREIGN KEY (subject_id) REFERENCES subjects(id) ON DELETE CASCADE,
                     CONSTRAINT fk_allocations_teacher FOREIGN KEY (teacher_id) REFERENCES users(id) ON DELETE CASCADE
-                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;"
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;",
+
+                // Enrollments Table (Updated with INT UNSIGNED to match foreign keys)
+                "CREATE TABLE IF NOT EXISTS enrollments (
+                    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                    school_id BIGINT UNSIGNED NOT NULL,
+                    year_id BIGINT UNSIGNED NOT NULL,
+                    student_id BIGINT UNSIGNED NOT NULL,
+                    class_id BIGINT UNSIGNED NOT NULL,
+                    enrollment_date DATE NOT NULL,
+                    status ENUM('active', 'transferred', 'completed', 'dropped') DEFAULT 'active',
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+                    CONSTRAINT fk_enrollments_school FOREIGN KEY (school_id) REFERENCES schools(id) ON DELETE CASCADE,
+                    CONSTRAINT fk_enrollments_year FOREIGN KEY (year_id) REFERENCES years(id) ON DELETE CASCADE,
+                    CONSTRAINT fk_enrollments_student FOREIGN KEY (student_id) REFERENCES users(id) ON DELETE CASCADE,
+                    CONSTRAINT fk_enrollments_class FOREIGN KEY (class_id) REFERENCES classes(id) ON DELETE CASCADE,
+
+                    INDEX idx_school_year_student (school_id, year_id, student_id),
+                    INDEX idx_school_class_status (school_id, class_id, status)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;",
 
             ];
 

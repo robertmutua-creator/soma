@@ -5,6 +5,7 @@ use App\Controllers\Admin\SchoolController;
 use App\Controllers\AuthController;
 use App\Controllers\School\AllocationsController;
 use App\Controllers\School\ClassesController;
+use App\Controllers\School\EnrollmentsController;
 use App\Controllers\School\StudentsController;
 use App\Controllers\School\SubjectsController;
 use App\Controllers\School\TeachersController;
@@ -72,3 +73,7 @@ $router->post('/school/terms/delete', [TermsController::class, 'delete']);
 $router->get('/school/allocations', [AllocationsController::class, 'index']);
 $router->post('/school/allocations/save', [AllocationsController::class, 'save']);
 $router->post('/school/allocations/delete', [AllocationsController::class, 'delete']);
+
+// Student Enrollments Routes
+$router->get('/school/enrollments', [EnrollmentsController::class, 'index']);
+$router->post('/school/enrollments/store', [EnrollmentsController::class, 'store']);

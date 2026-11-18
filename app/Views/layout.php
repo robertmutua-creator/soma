@@ -55,6 +55,9 @@
         Software by MutuaSoftwares <?= date('Y') ?>
         <script src="/assets/scripts/app.js"></script>
     </footer>
+    <?php if (isset($script)): ?>
+        <script src="/assets/scripts/<?= $script ?>.js"></script>
+    <?php endif; ?>
 </body>
 
 </html>
