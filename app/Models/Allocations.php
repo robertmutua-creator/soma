@@ -8,10 +8,11 @@ use PDOException;
 
 class Allocations extends Model
 {
+    protected string $table = 'allocations';
     public function allocations(int $yearId): array
     {
         try {
-            $stmt = $this->db->prepare("SELECT a.*,c.name as class_name,c.code as class_code,s.name as subject_name,s.code as subject_code,u.name as teacher_name FROM allocations a JOIN classes c ON a.class_id=c.id JOIN subjects s ON a.subject_id=s.id JOIN users u ON a.teacher_id=u.id WHERE a.school_id=:school AND a.year_id=:year ORDER BY a.status DESC,c.name ASC, s.name ASC");
+            $stmt = $this->db->prepare("SELECT a.*,c.name as class_name,c.code as class_code,s.name as subject_name,s.code as subject_code,u.name as teacher_name FROM allocations a JOIN classes c ON a.class_id=c.id JOIN subjects s ON a.subject_id=s.id JOIN users u ON a.teacher_id=u.id WHERE a.school_id=:school AND a.year_id=:year ORDER BY FIELD(a.status,'active','closed') ASC, c.name ASC, s.name ASC");
             $stmt->execute([
                 ':school' => $this->schoolId,
                 ':year' => $yearId
