@@ -109,6 +109,32 @@ class Migrations
                     UNIQUE KEY uq_terms_school_year_name (school_id, year_id, name),
                     INDEX idx_terms_school_status (school_id, status)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;",
+
+                // Allocations Table (Teacher-Subject Handover Management)
+                "CREATE TABLE IF NOT EXISTS allocations (
+                    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                    school_id BIGINT UNSIGNED NOT NULL,
+                    year_id BIGINT UNSIGNED NOT NULL,
+                    class_id BIGINT UNSIGNED NOT NULL,
+                    subject_id BIGINT UNSIGNED NOT NULL,
+                    teacher_id BIGINT UNSIGNED NOT NULL,
+                    from_date DATE NOT NULL,
+                    to_date DATE NULL DEFAULT NULL,
+                    status ENUM('active', 'closed') NOT NULL DEFAULT 'active',
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+                    INDEX idx_allocations_school_year (school_id, year_id),
+                    INDEX idx_allocations_active_lookup (school_id, year_id, class_id, subject_id, status),
+                    INDEX idx_allocations_teacher (school_id, teacher_id, status),
+
+                    CONSTRAINT fk_allocations_school FOREIGN KEY (school_id) REFERENCES schools(id) ON DELETE CASCADE,
+                    CONSTRAINT fk_allocations_year FOREIGN KEY (year_id) REFERENCES years(id) ON DELETE CASCADE,
+                    CONSTRAINT fk_allocations_class FOREIGN KEY (class_id) REFERENCES classes(id) ON DELETE CASCADE,
+                    CONSTRAINT fk_allocations_subject FOREIGN KEY (subject_id) REFERENCES subjects(id) ON DELETE CASCADE,
+                    CONSTRAINT fk_allocations_teacher FOREIGN KEY (teacher_id) REFERENCES users(id) ON DELETE CASCADE
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;"
+
             ];
 
             foreach ($sql as $query) {
