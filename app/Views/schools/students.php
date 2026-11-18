@@ -38,6 +38,18 @@
 
             <button type="submit"><?= (isset($student) && !empty($student)) ? 'Update' : 'Save' ?></button>
         </form>
+
+        <?php if (empty($student)): ?>
+            <hr>
+            <form action="/school/students/import" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="_token" value="<?= htmlspecialchars($token ?? '') ?>">
+
+                <label for="student_file">Batch Import (CSV) — <a href="/school/students/template">Download Template</a></label>
+                <input type="file" name="student_file" id="student_file" accept=".csv" required>
+
+                <button type="submit">Import CSV</button>
+            </form>
+        <?php endif; ?>
     </div>
 
     <div class="table">

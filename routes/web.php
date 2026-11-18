@@ -54,7 +54,8 @@ $router->post('/school/teachers/delete', [TeachersController::class, 'delete']);
 $router->get('/school/students', [StudentsController::class, 'index']);
 $router->post('/school/students/save', [StudentsController::class, 'save']);
 $router->post('/school/students/delete', [StudentsController::class, 'delete']);
-
+$router->get('/school/students/template', [StudentsController::class, 'downloadTemplate']);
+$router->post('/school/students/import', [StudentsController::class, 'importBatch']);
 
 // Academic Years Management
 $router->get('/school/years', [YearsController::class, 'index']);

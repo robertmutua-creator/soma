@@ -158,4 +158,94 @@ class StudentsController extends Controller
 
         $this->redirect($this->base);
     }
+
+    public function downloadTemplate(): void
+    {
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment; filament="student_import_template.csv"');
+
+        $output = fopen('php://output', 'w');
+
+        fputcsv($output, ['adm', 'name', 'upi', 'dob', 'doa', 'guardian', 'phone', 'status']);
+        fputcsv($output, ['ADM001', 'John Kamau', 'UPI1234', '2012-05-10', '2026-01-10', 'Mary Kamau', '072020202', 'active']);
+
+        fclose($output);
+        exit;
+    }
+
+    public function importBatch(): void
+    {
+        if (!$this->validateToken($_POST['_token'] ?? '')) {
+            $this->flash('error', 'Invalid security token.');
+            $this->redirect($this->base);
+        }
+
+        if (!isset($_FILES['student_file']) || $_FILES['student_file']['error'] !== UPLOAD_ERR_OK) {
+            $this->flash('error', 'Please upload a CSV file.');
+            $this->redirect($this->base);
+        }
+
+        $schoolCode = (new School())->find($this->schoolid())['code'] ?? '';
+        if ($schoolCode === '') {
+            $this->flash('error', 'School code not yet set.');
+            $this->redirect($this->base);
+            return;
+        }
+
+        $handle = fopen($_FILES['student_file']['tmp_name'], 'r');
+        fgetcsv($handle);
+
+        $success = 0;
+        $failed = 0;
+
+        while (($row = fgetcsv($handle)) !== false) {
+            [$adm, $name, $upi, $dob, $doa, $guardian, $phone, $status] = array_pad($row, 8, null);
+            $adm = trim($adm ?? '');
+            $name = trim($name ?? '');
+            $upi = trim($upi ?? '');
+            $dob = trim($dob ?? '');
+            $doa = trim($doa ?? '');
+            $guardian = trim($guardian ?? '');
+            $phone = trim($phone ?? '');
+            $status = trim($status ?? 'active');
+
+            if (!in_array($status, ['active', 'graduated', 'transferred'], true)) {
+                $status = 'active';
+            }
+
+            if ($name === '' || $adm === '' || $phone === '' || $dob === '' || $doa === '' || $guardian === '') {
+                $failed++;
+                continue;
+            }
+
+            $username = strtolower($adm . '@' . $schoolCode);
+
+            $data = [
+                'username' => $username,
+                'name' => $this->format($name, 'title'),
+                'role' => 'student',
+                'password' => password_hash($this->format($adm, 'upper'), PASSWORD_DEFAULT),
+                'phone' => $phone,
+                'guardian' => $this->format($guardian, 'title'),
+                'dob' => $dob,
+                'doa' => $doa,
+                'status' => $status,
+                'adm' => $this->format($adm, 'upper'),
+                'upi' => $upi !== '' ? $this->format($upi, 'upper') : null,
+                'profile_photo' => null
+            ];
+
+            try {
+                $this->student->create($data);
+                $success++;
+            } catch (\Throwable $e) {
+                error_log($e->getMessage());
+                $failed++;
+            }
+        }
+        fclose($handle);
+
+        $this->flash('success', "Batch import complete: {$success} registered successfully, {$failed} failed/skipped.");
+        $this->redirect($this->base);
+    }
 }
