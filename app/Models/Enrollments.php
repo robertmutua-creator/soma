@@ -60,17 +60,60 @@ class Enrollments extends Model
     public function enrolled(int $year, int $class): array
     {
         try {
-            $stmt = $this->db->prepare("SELECT u.*, e.id,As enrollment_id,e.year_id,e.class_id, e.enrollment_date, e.status AS enrollment_status FROM{$this->table} e INNER JOIN users u ON u.id=e.student_id AND u.school_id=e.school_id WHERE e.school_id=:school AND e.year_id=:year AND e.class_id=:class AND u.role='student'ORDER BY u.name ASC");
+            $stmt = $this->db->prepare("
+                SELECT
+                    u.*,
+                    e.id AS enrollment_id,
+                    e.year_id,
+                    e.class_id,
+                    e.enrollment_date,
+                    e.status AS status,
+                    e.status AS enrollment_status
+                FROM {$this->table} e
+                INNER JOIN users u
+                    ON u.id = e.student_id
+                    AND u.school_id = e.school_id
+                WHERE e.school_id = :school
+                  AND e.year_id = :year
+                  AND e.class_id = :class
+                  AND u.role = 'student'
+                ORDER BY u.name ASC
+            ");
 
             $stmt->execute([
                 ':school' => $this->schoolId,
                 ':year'   => $year,
                 ':class'  => $class,
             ]);
+
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
             error_log($e->getMessage());
             return [];
+        }
+    }
+
+    public function updateStatus(int $enrollmentId, string $status): bool
+    {
+        try {
+            $sql = "UPDATE {$this->table} SET status = :status WHERE id = :id";
+            $params = [
+                ':status' => $status,
+                ':id'     => $enrollmentId,
+            ];
+
+            if ($this->schoolId !== null) {
+                $sql .= " AND school_id = :school_id";
+                $params[':school_id'] = $this->schoolId;
+            }
+
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
+
+            return $stmt->rowCount() > 0;
+        } catch (PDOException $e) {
+            error_log($e->getMessage());
+            return false;
         }
     }
 }

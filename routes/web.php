@@ -77,3 +77,4 @@ $router->post('/school/allocations/delete', [AllocationsController::class, 'dele
 // Student Enrollments Routes
 $router->get('/school/enrollments', [EnrollmentsController::class, 'index']);
 $router->post('/school/enrollments/store', [EnrollmentsController::class, 'store']);
+$router->post('/school/enrollments/status', [EnrollmentsController::class, 'status']);
