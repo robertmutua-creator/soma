@@ -10,7 +10,7 @@ class Enrollments extends Model
 {
     protected string $table = 'enrollments';
 
-    public function unenrolledStudents(): array
+    public function unenrolled(): array
     {
         try {
             $stmt = $this->db->prepare("
@@ -36,7 +36,7 @@ class Enrollments extends Model
         }
     }
 
-    public function enrollStudent(array $data): bool
+    public function enroll(array $data): bool
     {
         try {
             $stmt = $this->db->prepare("
@@ -54,6 +54,23 @@ class Enrollments extends Model
         } catch (PDOException $e) {
             error_log($e->getMessage());
             return false;
+        }
+    }
+
+    public function enrolled(int $year, int $class): array
+    {
+        try {
+            $stmt = $this->db->prepare("SELECT u.*, e.id,As enrollment_id,e.year_id,e.class_id, e.enrollment_date, e.status AS enrollment_status FROM{$this->table} e INNER JOIN users u ON u.id=e.student_id AND u.school_id=e.school_id WHERE e.school_id=:school AND e.year_id=:year AND e.class_id=:class AND u.role='student'ORDER BY u.name ASC");
+
+            $stmt->execute([
+                ':school' => $this->schoolId,
+                ':year'   => $year,
+                ':class'  => $class,
+            ]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log($e->getMessage());
+            return [];
         }
     }
 }
