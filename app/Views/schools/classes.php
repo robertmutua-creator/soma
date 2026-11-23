@@ -4,6 +4,9 @@
             <input type="hidden" name="_token" value="<?= htmlspecialchars($token ?? '') ?>">
             <input type="hidden" name="id" value="<?= htmlspecialchars($class['id'] ?? '') ?>">
 
+            <label for="">Class Level</label>
+            <input type="number" name="level" id="level" value="<?= htmlspecialchars($class['level'] ?? '') ?>" placeholder="Class Level E.g 1">
+
             <label for="">Class Code</label>
             <input type="text" name="code" id="code" placeholder="G10" value="<?= htmlspecialchars($class['code'] ?? '') ?>">
 
@@ -19,6 +22,7 @@
             <thead>
                 <tr>
                     <th>#</th>
+                    <th>Level</th>
                     <th>#Code</th>
                     <th>Name</th>
                     <th>Action</th>
@@ -29,6 +33,7 @@
                     <?php foreach ($classes as $index => $cls): ?>
                         <tr>
                             <td><?= $index + 1; ?></td>
+                            <td><?= htmlspecialchars($cls['level']) ?></td>
                             <td><?= htmlspecialchars($cls['code']) ?></td>
                             <td><?= htmlspecialchars($cls['name']) ?></td>
                             <td>

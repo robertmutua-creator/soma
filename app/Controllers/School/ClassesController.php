@@ -48,15 +48,17 @@ class ClassesController extends Controller
         $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
         $code = trim($_POST['code'] ?? '');
         $name = trim($_POST['name'] ?? '');
+        $level = trim($_POST['level'] ?? '');
 
-        if ($code === '' || $name === '') {
-            $this->flash('error', 'Both code and name are required.');
+        if ($code === '' || $name === '' || $level === '') {
+            $this->flash('error', 'All fields are required.');
             $this->redirect('/school/classes');
         }
 
         $data = [
             'code' => $this->format($code, 'upper'),
-            'name' => $this->format($name, 'title')
+            'name' => $this->format($name, 'title'),
+            'level' => $level,
         ];
 
         $existing = null;

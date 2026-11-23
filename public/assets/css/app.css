@@ -214,6 +214,7 @@ main:has(.login) .login {
 .data .form input[type="text"],
 .data .form input[type="file"],
 .data .form input[type="date"],
+.data .form input[type="number"],
 .data .form select {
     width: 100%;
     padding: 11px;

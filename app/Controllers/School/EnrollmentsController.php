@@ -166,6 +166,7 @@ class EnrollmentsController extends Controller
     {
         $this->base = '/school/promotions';
         $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+        $highestClass = $this->classes->highestLevelId();
 
         if ($method === 'GET') {
             try {
@@ -194,6 +195,7 @@ class EnrollmentsController extends Controller
                     'token'             => $this->token(),
                     'script'            => 'promotions',
                     'students'          => $students,
+                    'highestClass'      => $highestClass,
                 ]);
             } catch (\Throwable $th) {
                 error_log('Promotions GET error: ' . $th->getMessage());
@@ -210,6 +212,7 @@ class EnrollmentsController extends Controller
                     'token'             => $this->token(),
                     'script'            => 'promotions',
                     'students'          => [],
+                    'highestClass'      => null,
                 ]);
             }
         }
@@ -233,6 +236,55 @@ class EnrollmentsController extends Controller
                 $token = (string) ($_POST['_token'] ?? '');
                 if (!$this->validateToken($token)) {
                     $this->flash('error', 'Invalid or expired security token. Please try again.');
+                    $this->redirect($redirectUrl);
+                }
+
+                $isGraduation = $highestClass !== null && $highestClass > 0 && $fromClass === $highestClass;
+
+                if ($isGraduation) {
+                    if ($fromYear <= 0) {
+                        $this->flash('error', 'Please select From Year for graduation.');
+                        $this->redirect($redirectUrl);
+                    }
+
+                    $rawIds = $_POST['student_ids'] ?? [];
+                    if (!is_array($rawIds) || empty($rawIds)) {
+                        $this->flash('error', 'Please select at least one student to graduate.');
+                        $this->redirect($redirectUrl);
+                    }
+
+                    $studentIds = array_values(array_unique(array_filter(
+                        array_map(static fn($id) => filter_var($id, FILTER_VALIDATE_INT), $rawIds),
+                        static fn($id) => is_int($id) && $id > 0
+                    )));
+
+                    if (empty($studentIds)) {
+                        $this->flash('error', 'No valid student selections were provided.');
+                        $this->redirect($redirectUrl);
+                    }
+
+                    $graduateCount = 0;
+                    $failedCount   = 0;
+
+                    foreach ($studentIds as $studentId) {
+                        $graduated = $this->enrollments->graduate($fromClass, $fromYear, $studentId);
+
+                        if ($graduated) {
+                            $graduateCount++;
+                        } else {
+                            $failedCount++;
+                            error_log("Graduation failed for student ID {$studentId} ({$fromYear}/{$fromClass})");
+                        }
+                    }
+
+                    if ($graduateCount > 0 && $failedCount === 0) {
+                        $this->flash('success', "{$graduateCount} student(s) graduated successfully!");
+                    } elseif ($graduateCount > 0) {
+                        $this->flash('warning', "{$graduateCount} student(s) graduated, {$failedCount} could not be graduated.");
+                    } else {
+                        $this->flash('error', 'Failed to graduate the selected students.');
+                    }
+
                     $this->redirect($redirectUrl);
                 }
 
@@ -291,7 +343,7 @@ class EnrollmentsController extends Controller
                 }
             } catch (\Throwable $th) {
                 error_log('Promotions POST error: ' . $th->getMessage());
-                $this->flash('error', 'An error occurred while promoting students.');
+                $this->flash('error', 'An error occurred while processing students.');
             }
 
             $this->redirect($redirectUrl);

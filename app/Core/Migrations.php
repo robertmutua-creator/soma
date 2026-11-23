@@ -60,6 +60,7 @@ class Migrations
                 "CREATE TABLE IF NOT EXISTS classes (
                     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
                     school_id INT UNSIGNED NOT NULL,
+                    level INT NOT NULL,
                     code VARCHAR(50) NOT NULL,
                     name VARCHAR(255) NOT NULL,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -143,7 +144,7 @@ class Migrations
                     student_id BIGINT UNSIGNED NOT NULL,
                     class_id BIGINT UNSIGNED NOT NULL,
                     enrollment_date DATE NOT NULL,
-                    status ENUM('active', 'transferred', 'completed', 'dropped') DEFAULT 'active',
+                    status ENUM('active', 'transferred', 'completed', 'dropped','graduated') DEFAULT 'active',
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 

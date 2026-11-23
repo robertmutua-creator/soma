@@ -164,4 +164,32 @@ class Enrollments extends Model
             return false;
         }
     }
+
+    public function graduate(int $fromClass, int $fromYear, int $studentId): bool
+    {
+        if ($fromClass <= 0 || $fromYear <= 0 || $studentId <= 0) {
+            return false;
+        }
+
+        try {
+            $sql = "UPDATE {$this->table}
+                    SET status = 'graduated'
+                    WHERE student_id = :student_id
+                      AND class_id = :class_id
+                      AND year_id = :year_id
+                      AND status = 'active'";
+
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([
+                ':student_id' => $studentId,
+                ':class_id'   => $fromClass,
+                ':year_id'    => $fromYear,
+            ]);
+
+            return $stmt->rowCount() > 0;
+        } catch (\Throwable $e) {
+            error_log('Enrollments::graduate error: ' . $e->getMessage());
+            return false;
+        }
+    }
 }
