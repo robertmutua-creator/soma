@@ -161,4 +161,140 @@ class EnrollmentsController extends Controller
 
         $this->redirect($redirectUrl);
     }
+
+    public function promotions(): void
+    {
+        $this->base = '/school/promotions';
+        $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+
+        if ($method === 'GET') {
+            try {
+                $selectedFromYear  = trim((string) ($_GET['fromYear'] ?? ''));
+                $selectedFromClass = trim((string) ($_GET['fromClass'] ?? ''));
+                $selectedToYear    = trim((string) ($_GET['toYear'] ?? ''));
+                $selectedToClass   = trim((string) ($_GET['toClass'] ?? ''));
+
+                $students = [];
+                if ($selectedFromClass !== '' && $selectedFromYear !== '') {
+                    $students = $this->enrollments->enrolled(
+                        (int) $selectedFromYear,
+                        (int) $selectedFromClass
+                    );
+                }
+
+                $this->view([
+                    'title'             => 'Promotions Management',
+                    'content'           => 'schools/promotions',
+                    'years'             => $this->years->all(),
+                    'classes'           => $this->classes->all(),
+                    'selectedFromYear'  => $selectedFromYear,
+                    'selectedFromClass' => $selectedFromClass,
+                    'selectedToYear'    => $selectedToYear,
+                    'selectedToClass'   => $selectedToClass,
+                    'token'             => $this->token(),
+                    'script'            => 'promotions',
+                    'students'          => $students,
+                ]);
+            } catch (\Throwable $th) {
+                error_log('Promotions GET error: ' . $th->getMessage());
+                $this->flash('error', 'Unable to load promotions data.');
+                $this->view([
+                    'title'             => 'Promotions Management',
+                    'content'           => 'schools/promotions',
+                    'years'             => [],
+                    'classes'           => [],
+                    'selectedFromYear'  => '',
+                    'selectedFromClass' => '',
+                    'selectedToYear'    => '',
+                    'selectedToClass'   => '',
+                    'token'             => $this->token(),
+                    'script'            => 'promotions',
+                    'students'          => [],
+                ]);
+            }
+        }
+
+        if ($method === 'POST') {
+            $fromYear  = filter_input(INPUT_POST, 'fromYear', FILTER_VALIDATE_INT) ?: 0;
+            $fromClass = filter_input(INPUT_POST, 'fromClass', FILTER_VALIDATE_INT) ?: 0;
+            $toYear    = filter_input(INPUT_POST, 'toYear', FILTER_VALIDATE_INT) ?: 0;
+            $toClass   = filter_input(INPUT_POST, 'toClass', FILTER_VALIDATE_INT) ?: 0;
+
+            $query = array_filter([
+                'fromYear'  => $fromYear > 0 ? $fromYear : null,
+                'fromClass' => $fromClass > 0 ? $fromClass : null,
+                'toYear'    => $toYear > 0 ? $toYear : null,
+                'toClass'   => $toClass > 0 ? $toClass : null,
+            ]);
+
+            $redirectUrl = $this->base . (!empty($query) ? '?' . http_build_query($query) : '');
+
+            try {
+                $token = (string) ($_POST['_token'] ?? '');
+                if (!$this->validateToken($token)) {
+                    $this->flash('error', 'Invalid or expired security token. Please try again.');
+                    $this->redirect($redirectUrl);
+                }
+
+                if ($fromYear <= 0 || $fromClass <= 0 || $toYear <= 0 || $toClass <= 0) {
+                    $this->flash('error', 'Please select From Year, From Class, To Year, and To Class.');
+                    $this->redirect($redirectUrl);
+                }
+
+                if ($fromYear === $toYear && $fromClass === $toClass) {
+                    $this->flash('error', 'Source and target year and class cannot be identical.');
+                    $this->redirect($redirectUrl);
+                }
+
+                $rawIds = $_POST['student_ids'] ?? [];
+                if (!is_array($rawIds) || empty($rawIds)) {
+                    $this->flash('error', 'Please select at least one student to promote.');
+                    $this->redirect($redirectUrl);
+                }
+
+                $studentIds = array_values(array_unique(array_filter(
+                    array_map(static fn($id) => filter_var($id, FILTER_VALIDATE_INT), $rawIds),
+                    static fn($id) => is_int($id) && $id > 0
+                )));
+
+                if (empty($studentIds)) {
+                    $this->flash('error', 'No valid student selections were provided.');
+                    $this->redirect($redirectUrl);
+                }
+
+                $promotedCount = 0;
+                $failedCount   = 0;
+
+                foreach ($studentIds as $studentId) {
+                    $promoted = $this->enrollments->promote(
+                        $fromYear,
+                        $fromClass,
+                        $toYear,
+                        $toClass,
+                        $studentId
+                    );
+
+                    if ($promoted) {
+                        $promotedCount++;
+                    } else {
+                        $failedCount++;
+                        error_log("Promotion failed for student ID {$studentId} ({$fromYear}/{$fromClass} -> {$toYear}/{$toClass})");
+                    }
+                }
+
+                if ($promotedCount > 0 && $failedCount === 0) {
+                    $this->flash('success', "{$promotedCount} student(s) promoted successfully!");
+                } elseif ($promotedCount > 0) {
+                    $this->flash('warning', "{$promotedCount} student(s) promoted, {$failedCount} could not be promoted.");
+                } else {
+                    $this->flash('error', 'Failed to promote the selected students.');
+                }
+            } catch (\Throwable $th) {
+                error_log('Promotions POST error: ' . $th->getMessage());
+                $this->flash('error', 'An error occurred while promoting students.');
+            }
+
+            $this->redirect($redirectUrl);
+        }
+    }
 }

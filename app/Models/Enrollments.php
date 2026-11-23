@@ -116,4 +116,52 @@ class Enrollments extends Model
             return false;
         }
     }
+
+    public function promote(int $fromYear, int $fromClass, int $toYear, int $toClass, int $student): bool
+    {
+        try {
+            $this->db->beginTransaction();
+
+            $stmt1 = $this->db->prepare("
+                UPDATE {$this->table}
+                SET status = 'completed'
+                WHERE student_id = :student
+                  AND year_id = :fromYear
+                  AND class_id = :fromClass
+                  AND status = 'active'
+                  AND school_id = :school
+            ");
+            $stmt1->execute([
+                ':student'   => $student,
+                ':fromYear'  => $fromYear,
+                ':fromClass' => $fromClass,
+                ':school'    => $this->schoolId,
+            ]);
+
+            if ($stmt1->rowCount() === 0) {
+                $this->db->rollBack();
+                return false;
+            }
+
+            $enrolled = $this->enroll([
+                'year_id'    => $toYear,
+                'student_id' => $student,
+                'class_id'   => $toClass,
+            ]);
+
+            if (!$enrolled) {
+                $this->db->rollBack();
+                return false;
+            }
+
+            $this->db->commit();
+            return true;
+        } catch (PDOException $e) {
+            error_log($e->getMessage());
+            if ($this->db->inTransaction()) {
+                $this->db->rollBack();
+            }
+            return false;
+        }
+    }
 }

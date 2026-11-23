@@ -221,6 +221,7 @@ class Controller
                 $links[] = ['link' => '/school/years', 'label' => 'Manage Academic Years'];
                 $links[] = ['link' => '/school/terms', 'label' => 'Manage Terms'];
                 $links[] = ['link' => '/school/allocations', 'label' => 'Teacher Subjects Allocations'];
+                $links[] = ['link' => '/school/promotions', 'label' => 'Students Promotions'];
                 break;
         }
         $links[] = ['link' => '/logout', 'label' => 'Logout'];
