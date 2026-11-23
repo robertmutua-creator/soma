@@ -25,4 +25,22 @@ class Classes extends Model
 
         return $id !== false ? (int) $id : null;
     }
+
+    public function lowestLevelId(): ?int
+    {
+        $sql = "SELECT id
+                FROM {$this->table}
+                WHERE school_id = :school_id
+                ORDER BY level ASC, id ASC
+                LIMIT 1";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([
+            ':school_id' => $this->schoolId,
+        ]);
+
+        $id = $stmt->fetchColumn();
+
+        return $id !== false ? (int) $id : null;
+    }
 }

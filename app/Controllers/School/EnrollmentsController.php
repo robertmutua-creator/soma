@@ -349,4 +349,177 @@ class EnrollmentsController extends Controller
             $this->redirect($redirectUrl);
         }
     }
+
+    public function demote(): void
+    {
+        $this->base = '/school/demotions';
+        $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+        $lowestClass = $this->classes->lowestLevelId();
+
+        if ($method === 'GET') {
+            try {
+                $selectedFromYear  = trim((string) ($_GET['fromYear'] ?? ''));
+                $selectedFromClass = trim((string) ($_GET['fromClass'] ?? ''));
+                $selectedToYear    = trim((string) ($_GET['toYear'] ?? ''));
+                $selectedToClass   = trim((string) ($_GET['toClass'] ?? ''));
+
+                $students = [];
+                if ($selectedFromClass !== '' && $selectedFromYear !== '') {
+                    $students = $this->enrollments->enrolled(
+                        (int) $selectedFromYear,
+                        (int) $selectedFromClass
+                    );
+                }
+
+                $this->view([
+                    'title'             => 'Demotions Management',
+                    'content'           => 'schools/demote',
+                    'years'             => $this->years->all(),
+                    'classes'           => $this->classes->all(),
+                    'selectedFromYear'  => $selectedFromYear,
+                    'selectedFromClass' => $selectedFromClass,
+                    'selectedToYear'    => $selectedToYear,
+                    'selectedToClass'   => $selectedToClass,
+                    'token'             => $this->token(),
+                    'script'            => 'demotions',
+                    'students'          => $students,
+                    'lowestClass'       => $lowestClass,
+                ]);
+            } catch (\Throwable $th) {
+                error_log('Demotions GET error: ' . $th->getMessage());
+                $this->flash('error', 'Unable to load demotions data.');
+                $this->view([
+                    'title'             => 'Demotions Management',
+                    'content'           => 'schools/demote',
+                    'years'             => [],
+                    'classes'           => [],
+                    'selectedFromYear'  => '',
+                    'selectedFromClass' => '',
+                    'selectedToYear'    => '',
+                    'selectedToClass'   => '',
+                    'token'             => $this->token(),
+                    'script'            => 'demotions',
+                    'students'          => [],
+                    'lowestClass'       => null,
+                ]);
+            }
+            return;
+        }
+
+        if ($method === 'POST') {
+            $fromYear  = filter_input(INPUT_POST, 'fromYear', FILTER_VALIDATE_INT) ?: 0;
+            $fromClass = filter_input(INPUT_POST, 'fromClass', FILTER_VALIDATE_INT) ?: 0;
+            $toYear    = filter_input(INPUT_POST, 'toYear', FILTER_VALIDATE_INT) ?: 0;
+            $toClass   = filter_input(INPUT_POST, 'toClass', FILTER_VALIDATE_INT) ?: 0;
+
+            $query = array_filter([
+                'fromYear'  => $fromYear > 0 ? $fromYear : null,
+                'fromClass' => $fromClass > 0 ? $fromClass : null,
+                'toYear'    => $toYear > 0 ? $toYear : null,
+                'toClass'   => $toClass > 0 ? $toClass : null,
+            ]);
+
+            $redirectUrl = $this->base . (!empty($query) ? '?' . http_build_query($query) : '');
+
+            try {
+                $token = (string) ($_POST['_token'] ?? '');
+                if (!$this->validateToken($token)) {
+                    $this->flash('error', 'Invalid or expired security token. Please try again.');
+                    $this->redirect($redirectUrl);
+                    return;
+                }
+
+                if ($fromYear <= 0 || $fromClass <= 0) {
+                    $this->flash('error', 'Please select both From Year and From Class.');
+                    $this->redirect($redirectUrl);
+                    return;
+                }
+
+                $rawIds = $_POST['student_ids'] ?? [];
+                if (!is_array($rawIds) || empty($rawIds)) {
+                    $this->flash('error', 'Please select at least one student.');
+                    $this->redirect($redirectUrl);
+                    return;
+                }
+
+                $studentIds = array_values(array_unique(array_filter(
+                    array_map(static fn($id) => filter_var($id, FILTER_VALIDATE_INT), $rawIds),
+                    static fn($id) => is_int($id) && $id > 0
+                )));
+
+                if (empty($studentIds)) {
+                    $this->flash('error', 'No valid student selections were provided.');
+                    $this->redirect($redirectUrl);
+                    return;
+                }
+
+                $isLowestClass = $lowestClass !== null && $fromClass === $lowestClass;
+                $successCount = 0;
+                $failedCount  = 0;
+
+                if ($isLowestClass) {
+                    foreach ($studentIds as $studentId) {
+                        $updated = $this->enrollments->updateEnrollment($fromClass, $fromYear, $studentId);
+
+                        if ($updated) {
+                            $successCount++;
+                        } else {
+                            $failedCount++;
+                            error_log("Lowest-class enrollment reactivate failed for student ID {$studentId} ({$fromYear}/{$fromClass})");
+                        }
+                    }
+
+                    if ($successCount > 0 && $failedCount === 0) {
+                        $this->flash('success', "{$successCount} student enrollment(s) reactivated successfully!");
+                    } elseif ($successCount > 0) {
+                        $this->flash('warning', "{$successCount} student enrollment(s) reactivated, {$failedCount} could not be updated.");
+                    } else {
+                        $this->flash('error', 'Failed to reactivate enrollments for the selected students.');
+                    }
+                } else {
+                    if ($toYear <= 0 || $toClass <= 0) {
+                        $this->flash('error', 'Please select To Year and To Class for demotion.');
+                        $this->redirect($redirectUrl);
+                        return;
+                    }
+
+                    if ($fromYear === $toYear && $fromClass === $toClass) {
+                        $this->flash('error', 'Demotion requires a different target academic year or class.');
+                        $this->redirect($redirectUrl);
+                        return;
+                    }
+
+                    foreach ($studentIds as $studentId) {
+                        $demoted = $this->enrollments->demote(
+                            $fromYear,
+                            $fromClass,
+                            $toYear,
+                            $toClass,
+                            $studentId
+                        );
+
+                        if ($demoted) {
+                            $successCount++;
+                        } else {
+                            $failedCount++;
+                            error_log("Demotion failed for student ID {$studentId} ({$fromYear}/{$fromClass} -> {$toYear}/{$toClass})");
+                        }
+                    }
+
+                    if ($successCount > 0 && $failedCount === 0) {
+                        $this->flash('success', "{$successCount} student(s) demoted successfully!");
+                    } elseif ($successCount > 0) {
+                        $this->flash('warning', "{$successCount} student(s) demoted, {$failedCount} could not be demoted.");
+                    } else {
+                        $this->flash('error', 'Failed to demote the selected students.');
+                    }
+                }
+            } catch (\Throwable $th) {
+                error_log('Demotions POST error: ' . $th->getMessage());
+                $this->flash('error', 'An error occurred while processing demotions.');
+            }
+
+            $this->redirect($redirectUrl);
+        }
+    }
 }

@@ -213,17 +213,22 @@ class Controller
                 $links[] = ['link' => '/admin/admins', 'label' => 'Manage School Admins'];
                 break;
             case 'school':
-                $links[] = ['link' => '/school/classes', 'label' => 'Manage Streams'];
-                $links[] = ['link' => '/school/subjects', 'label' => 'Manage Subjects'];
+                // Daily student & enrollment operations
                 $links[] = ['link' => '/school/students', 'label' => 'Manage Students'];
                 $links[] = ['link' => '/school/enrollments', 'label' => 'Students Enrollments'];
-                $links[] = ['link' => '/school/teachers', 'label' => 'Manage Teachers'];
+                $links[] = ['link' => '/school/promotions', 'label' => 'Students Promotions'];
+                $links[] = ['link' => '/school/demotions', 'label' => 'Demote Students'];
+
+                // Academic & staff setup
                 $links[] = ['link' => '/school/years', 'label' => 'Manage Academic Years'];
                 $links[] = ['link' => '/school/terms', 'label' => 'Manage Terms'];
+                $links[] = ['link' => '/school/classes', 'label' => 'Manage Streams'];
+                $links[] = ['link' => '/school/subjects', 'label' => 'Manage Subjects'];
+                $links[] = ['link' => '/school/teachers', 'label' => 'Manage Teachers'];
                 $links[] = ['link' => '/school/allocations', 'label' => 'Teacher Subjects Allocations'];
-                $links[] = ['link' => '/school/promotions', 'label' => 'Students Promotions'];
                 break;
         }
+
         $links[] = ['link' => '/logout', 'label' => 'Logout'];
 
         return $links;

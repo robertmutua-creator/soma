@@ -80,3 +80,5 @@ $router->post('/school/enrollments/store', [EnrollmentsController::class, 'store
 $router->post('/school/enrollments/status', [EnrollmentsController::class, 'status']);
 $router->get('/school/promotions', [EnrollmentsController::class, 'promotions']);
 $router->post('/school/promotions', [EnrollmentsController::class, 'promotions']);
+$router->get('/school/demotions', [EnrollmentsController::class, 'demote']);
+$router->post('/school/demotions', [EnrollmentsController::class, 'demote']);

@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Core\Model;
 use PDO;
 use PDOException;
+use Throwable;
 
 class Enrollments extends Model
 {
@@ -189,6 +190,92 @@ class Enrollments extends Model
             return $stmt->rowCount() > 0;
         } catch (\Throwable $e) {
             error_log('Enrollments::graduate error: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function demote(int $fromYear, int $fromClass, int $toYear, int $toClass, int $student): bool
+    {
+        try {
+            $this->db->beginTransaction();
+
+            $stmt1 = $this->db->prepare(
+                "DELETE FROM {$this->table}
+                 WHERE school_id = :school
+                   AND student_id = :student
+                   AND class_id = :class
+                   AND year_id = :year
+                   AND status = 'active'"
+            );
+            $stmt1->execute([
+                ':school'  => $this->schoolId,
+                ':student' => $student,
+                ':class'   => $fromClass,
+                ':year'    => $fromYear,
+            ]);
+
+            if ($stmt1->rowCount() === 0) {
+                $this->db->rollBack();
+                return false;
+            }
+
+            $stmt2 = $this->db->prepare(
+                "UPDATE {$this->table}
+                 SET status = 'active'
+                 WHERE student_id = :student
+                   AND class_id = :class
+                   AND year_id = :year
+                   AND status = 'completed'
+                   AND school_id = :school"
+            );
+            $stmt2->execute([
+                ':student' => $student,
+                ':class'   => $toClass,
+                ':school'  => $this->schoolId,
+                ':year'    => $toYear,
+            ]);
+
+            if ($stmt2->rowCount() === 0) {
+                $this->db->rollBack();
+                return false;
+            }
+
+            $this->db->commit();
+            return true;
+        } catch (\Throwable $e) {
+            if ($this->db->inTransaction()) {
+                $this->db->rollBack();
+            }
+            error_log('Enrollments::demote error: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function updateEnrollment(int $classId, int $yearId, int $studentId): bool
+    {
+        if ($this->schoolId <= 0 || $classId <= 0 || $yearId <= 0 || $studentId <= 0) {
+            return false;
+        }
+
+        try {
+            $sql = "UPDATE {$this->table}
+                    SET status = 'active'
+                    WHERE school_id = :school_id
+                      AND class_id = :class_id
+                      AND year_id = :year_id
+                      AND student_id = :student_id";
+
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([
+                ':school_id'  => $this->schoolId,
+                ':class_id'   => $classId,
+                ':year_id'    => $yearId,
+                ':student_id' => $studentId,
+            ]);
+
+            return $stmt->rowCount() > 0;
+        } catch (\Throwable $e) {
+            error_log('Enrollments::updateEnrollment error: ' . $e->getMessage());
             return false;
         }
     }
