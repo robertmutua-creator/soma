@@ -50,7 +50,7 @@
                             <td><?= htmlspecialchars($enr['name']) ?></td>
                             <td>
                                 <?php
-                                $statuses = ['active', 'transferred', 'completed', 'dropped'];
+                                $statuses = ['active', 'transferred', 'completed', 'dropped', 'graduated'];
                                 $rowStatus = (string) ($enr['status'] ?? $enr['enrollment_status'] ?? 'active');
                                 $yearFilter = (string) ($currentYearId ?? $enr['year_id'] ?? '');
                                 $classFilter = (string) ($currentClassId ?? $enr['class_id'] ?? '');
