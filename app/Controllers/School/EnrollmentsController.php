@@ -241,8 +241,8 @@ class EnrollmentsController extends Controller
                     $this->redirect($redirectUrl);
                 }
 
-                if ($fromYear === $toYear && $fromClass === $toClass) {
-                    $this->flash('error', 'Source and target year and class cannot be identical.');
+                if ($fromYear === $toYear || $fromClass === $toClass) {
+                    $this->flash('error', 'Promotion requires a different target academic year and class (use class transfer for same-year moves).');
                     $this->redirect($redirectUrl);
                 }
 
