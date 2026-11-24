@@ -18,7 +18,7 @@
 
             <label for="strand">Strand Name</label>
             <input type="text" name="name" id="name" placeholder="E.g Introduction to Science" value="<?= htmlspecialchars($strand['name'] ?? '') ?>">
-            <button type="submit" id="register">Register Strand</button>
+            <button type="submit" id="register"><?= (isset($strand) && !empty($strand)) ? 'Update Strand' : 'Save Strand' ?></button>
         </form>
     </div>
 
