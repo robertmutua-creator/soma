@@ -11,8 +11,12 @@ body {
 
 /* Header */
 header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
     height: 60px;
     padding: 0 20px;
+    background: #fff;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -25,18 +29,23 @@ header img {
     border-radius: 50%;
     object-fit: cover;
 }
-
 /* Main layout */
 main {
     display: flex;
-    min-height: calc(100vh - 110px);
+    min-height: calc(100vh - 60px);
+    align-items: flex-start;
 }
 
 /* Sidebar */
 nav {
+    position: sticky;
+    top: 60px;
     width: 220px;
+    height: calc(100vh - 60px);
+    overflow-y: auto;
     flex-shrink: 0;
     padding: 20px;
+    background: #fff;
     display: flex;
     flex-direction: column;
     gap: 12px;
@@ -336,12 +345,14 @@ main:has(.login) .login {
 
     nav {
         display: none;
-        position: absolute;
+        position: fixed;
         top: 60px;
         left: 0;
         width: 220px;
-        background: white;
-        z-index: 10;
+        height: calc(100vh - 60px);
+        overflow-y: auto;
+        background: #fff;
+        z-index: 15;
     }
 
     nav.open {
