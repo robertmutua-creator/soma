@@ -224,6 +224,7 @@ class Controller
                 $links[] = ['link' => '/school/terms', 'label' => 'Manage Terms'];
                 $links[] = ['link' => '/school/classes', 'label' => 'Manage Streams'];
                 $links[] = ['link' => '/school/subjects', 'label' => 'Manage Subjects'];
+                $links[] = ['link' => '/school/strands', 'label' => 'Subject Strands'];
                 $links[] = ['link' => '/school/teachers', 'label' => 'Manage Teachers'];
                 $links[] = ['link' => '/school/allocations', 'label' => 'Teacher Subjects Allocations'];
                 break;

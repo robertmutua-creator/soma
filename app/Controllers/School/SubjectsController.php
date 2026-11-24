@@ -94,8 +94,8 @@ class SubjectsController extends Controller
             $this->flash('error', 'Invalid subject ID.');
             $this->redirect('/school/subjects');
         }
-        $class = $this->subject->find($id);
-        if (!$class) {
+        $subject = $this->subject->find($id);
+        if (!$subject) {
             $this->flash('error', 'Subject not found.');
             $this->redirect('/school/subjects');
         }

@@ -157,6 +157,19 @@ class Migrations
                     INDEX idx_school_class_status (school_id, class_id, status)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;",
 
+                "CREATE TABLE IF NOT EXISTS strands (
+                    `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+                    `school_id` BIGINT UNSIGNED NOT NULL,
+                    `subject_id` BIGINT UNSIGNED NOT NULL,
+                    `name` VARCHAR(150) NOT NULL,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                    PRIMARY KEY (`id`),
+                    UNIQUE KEY `uq_strands_school_subject_name` (`school_id`, `subject_id`, `name`),
+                    CONSTRAINT `fk_strands_school` FOREIGN KEY (`school_id`) REFERENCES `schools` (`id`) ON DELETE CASCADE,
+                    CONSTRAINT `fk_strands_subject` FOREIGN KEY (`subject_id`) REFERENCES `subjects` (`id`) ON DELETE CASCADE
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;",
+
             ];
 
             foreach ($sql as $query) {
