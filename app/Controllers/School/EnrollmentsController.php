@@ -429,8 +429,20 @@ class EnrollmentsController extends Controller
                     return;
                 }
 
-                if ($fromYear <= 0 || $fromClass <= 0) {
-                    $this->flash('error', 'Please select both From Year and From Class.');
+                if ($fromYear <= 0 || $fromClass <= 0 || $toYear <= 0 || $toClass <= 0) {
+                    $this->flash('error', 'Please select From Year, From Class, To Year, and To Class.');
+                    $this->redirect($redirectUrl);
+                    return;
+                }
+
+                if ($lowestClass !== null && $fromClass === $lowestClass) {
+                    $this->flash('error', 'Students in the lowest class level cannot be demoted further.');
+                    $this->redirect($redirectUrl);
+                    return;
+                }
+
+                if ($fromYear === $toYear && $fromClass === $toClass) {
+                    $this->flash('error', 'Demotion requires a different target academic year or class.');
                     $this->redirect($redirectUrl);
                     return;
                 }
@@ -453,66 +465,32 @@ class EnrollmentsController extends Controller
                     return;
                 }
 
-                $isLowestClass = $lowestClass !== null && $fromClass === $lowestClass;
                 $successCount = 0;
                 $failedCount  = 0;
 
-                if ($isLowestClass) {
-                    foreach ($studentIds as $studentId) {
-                        $updated = $this->enrollments->updateEnrollment($fromClass, $fromYear, $studentId);
+                foreach ($studentIds as $studentId) {
+                    $demoted = $this->enrollments->demote(
+                        $fromYear,
+                        $fromClass,
+                        $toYear,
+                        $toClass,
+                        $studentId
+                    );
 
-                        if ($updated) {
-                            $successCount++;
-                        } else {
-                            $failedCount++;
-                            error_log("Lowest-class enrollment reactivate failed for student ID {$studentId} ({$fromYear}/{$fromClass})");
-                        }
-                    }
-
-                    if ($successCount > 0 && $failedCount === 0) {
-                        $this->flash('success', "{$successCount} student enrollment(s) reactivated successfully!");
-                    } elseif ($successCount > 0) {
-                        $this->flash('warning', "{$successCount} student enrollment(s) reactivated, {$failedCount} could not be updated.");
+                    if ($demoted) {
+                        $successCount++;
                     } else {
-                        $this->flash('error', 'Failed to reactivate enrollments for the selected students.');
+                        $failedCount++;
+                        error_log("Demotion failed for student ID {$studentId} ({$fromYear}/{$fromClass} -> {$toYear}/{$toClass})");
                     }
+                }
+
+                if ($successCount > 0 && $failedCount === 0) {
+                    $this->flash('success', "{$successCount} student(s) demoted successfully!");
+                } elseif ($successCount > 0) {
+                    $this->flash('warning', "{$successCount} student(s) demoted, {$failedCount} could not be demoted.");
                 } else {
-                    if ($toYear <= 0 || $toClass <= 0) {
-                        $this->flash('error', 'Please select To Year and To Class for demotion.');
-                        $this->redirect($redirectUrl);
-                        return;
-                    }
-
-                    if ($fromYear === $toYear && $fromClass === $toClass) {
-                        $this->flash('error', 'Demotion requires a different target academic year or class.');
-                        $this->redirect($redirectUrl);
-                        return;
-                    }
-
-                    foreach ($studentIds as $studentId) {
-                        $demoted = $this->enrollments->demote(
-                            $fromYear,
-                            $fromClass,
-                            $toYear,
-                            $toClass,
-                            $studentId
-                        );
-
-                        if ($demoted) {
-                            $successCount++;
-                        } else {
-                            $failedCount++;
-                            error_log("Demotion failed for student ID {$studentId} ({$fromYear}/{$fromClass} -> {$toYear}/{$toClass})");
-                        }
-                    }
-
-                    if ($successCount > 0 && $failedCount === 0) {
-                        $this->flash('success', "{$successCount} student(s) demoted successfully!");
-                    } elseif ($successCount > 0) {
-                        $this->flash('warning', "{$successCount} student(s) demoted, {$failedCount} could not be demoted.");
-                    } else {
-                        $this->flash('error', 'Failed to demote the selected students.');
-                    }
+                    $this->flash('error', 'Failed to demote the selected students.');
                 }
             } catch (\Throwable $th) {
                 error_log('Demotions POST error: ' . $th->getMessage());

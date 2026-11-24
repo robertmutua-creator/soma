@@ -250,33 +250,4 @@ class Enrollments extends Model
             return false;
         }
     }
-
-    public function updateEnrollment(int $classId, int $yearId, int $studentId): bool
-    {
-        if ($this->schoolId <= 0 || $classId <= 0 || $yearId <= 0 || $studentId <= 0) {
-            return false;
-        }
-
-        try {
-            $sql = "UPDATE {$this->table}
-                    SET status = 'active'
-                    WHERE school_id = :school_id
-                      AND class_id = :class_id
-                      AND year_id = :year_id
-                      AND student_id = :student_id";
-
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute([
-                ':school_id'  => $this->schoolId,
-                ':class_id'   => $classId,
-                ':year_id'    => $yearId,
-                ':student_id' => $studentId,
-            ]);
-
-            return $stmt->rowCount() > 0;
-        } catch (\Throwable $e) {
-            error_log('Enrollments::updateEnrollment error: ' . $e->getMessage());
-            return false;
-        }
-    }
 }
