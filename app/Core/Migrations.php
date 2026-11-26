@@ -189,6 +189,24 @@ class Migrations
                     UNIQUE KEY uq_substrands_school_strand_name (school_id, strand_id, name)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
 
+                "CREATE TABLE IF NOT EXISTS assessments (
+                    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                    school_id BIGINT UNSIGNED NOT NULL,
+                    type ENUM('formative', 'summative') NOT NULL DEFAULT 'formative',
+                    start_date DATE NOT NULL,
+                    end_date DATE NOT NULL,
+                    status ENUM('active', 'completed') NOT NULL DEFAULT 'active',
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+                    CONSTRAINT fk_assessments_school
+                        FOREIGN KEY (school_id) REFERENCES schools(id)
+                        ON DELETE CASCADE,
+
+                    INDEX idx_assessments_school_status (school_id, status),
+                    INDEX idx_assessments_dates (school_id, start_date, end_date)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
+
             ];
 
             foreach ($sql as $query) {

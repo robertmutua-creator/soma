@@ -4,6 +4,7 @@ use App\Controllers\Admin\SchoolAdminsController;
 use App\Controllers\Admin\SchoolController;
 use App\Controllers\AuthController;
 use App\Controllers\School\AllocationsController;
+use App\Controllers\School\AssessmentsController;
 use App\Controllers\School\ClassesController;
 use App\Controllers\School\EnrollmentsController;
 use App\Controllers\School\StrandsController;
@@ -93,3 +94,9 @@ $router->get('/school/promotions', [EnrollmentsController::class, 'promotions'])
 $router->post('/school/promotions', [EnrollmentsController::class, 'promotions']);
 $router->get('/school/demotions', [EnrollmentsController::class, 'demote']);
 $router->post('/school/demotions', [EnrollmentsController::class, 'demote']);
+
+
+// Assessments Routes
+$router->get('/school/assessments', [AssessmentsController::class, 'index']);
+$router->post('/school/assessments/save', [AssessmentsController::class, 'save']);
+$router->post('/school/assessments/delete', [AssessmentsController::class, 'delete']);

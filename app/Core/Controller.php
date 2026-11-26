@@ -212,22 +212,30 @@ class Controller
                 $links[] = ['link' => '/admin/schools', 'label' => 'Manage Schools'];
                 $links[] = ['link' => '/admin/admins', 'label' => 'Manage School Admins'];
                 break;
+
             case 'school':
-                // Daily student & enrollment operations
+                // Academic calendar & structure
+                $links[] = ['link' => '/school/years', 'label' => 'Manage Academic Years'];
+                $links[] = ['link' => '/school/terms', 'label' => 'Manage Terms'];
+                $links[] = ['link' => '/school/classes', 'label' => 'Manage Streams'];
+
+                // Curriculum hierarchy
+                $links[] = ['link' => '/school/subjects', 'label' => 'Manage Subjects'];
+                $links[] = ['link' => '/school/strands', 'label' => 'Subject Strands'];
+                $links[] = ['link' => '/school/substrands', 'label' => 'Substrands'];
+
+                // Staff & subject assignments
+                $links[] = ['link' => '/school/teachers', 'label' => 'Manage Teachers'];
+                $links[] = ['link' => '/school/allocations', 'label' => 'Teacher Subjects Allocations'];
+
+                // Assessments
+                $links[] = ['link' => '/school/assessments', 'label' => 'Manage Assessments'];
+
+                // Student records & movement
                 $links[] = ['link' => '/school/students', 'label' => 'Manage Students'];
                 $links[] = ['link' => '/school/enrollments', 'label' => 'Students Enrollments'];
                 $links[] = ['link' => '/school/promotions', 'label' => 'Students Promotions'];
                 $links[] = ['link' => '/school/demotions', 'label' => 'Demote Students'];
-
-                // Academic & staff setup
-                $links[] = ['link' => '/school/years', 'label' => 'Manage Academic Years'];
-                $links[] = ['link' => '/school/terms', 'label' => 'Manage Terms'];
-                $links[] = ['link' => '/school/classes', 'label' => 'Manage Streams'];
-                $links[] = ['link' => '/school/subjects', 'label' => 'Manage Subjects'];
-                $links[] = ['link' => '/school/strands', 'label' => 'Subject Strands'];
-                $links[] = ['link' => '/school/substrands', 'label' => 'Substrands'];
-                $links[] = ['link' => '/school/teachers', 'label' => 'Manage Teachers'];
-                $links[] = ['link' => '/school/allocations', 'label' => 'Teacher Subjects Allocations'];
                 break;
         }
 
