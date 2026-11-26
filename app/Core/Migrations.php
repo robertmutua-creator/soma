@@ -170,6 +170,25 @@ class Migrations
                     CONSTRAINT `fk_strands_subject` FOREIGN KEY (`subject_id`) REFERENCES `subjects` (`id`) ON DELETE CASCADE
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;",
 
+                "CREATE TABLE IF NOT EXISTS substrands (
+                    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                    school_id BIGINT UNSIGNED NOT NULL,
+                    strand_id BIGINT UNSIGNED NOT NULL,
+                    name VARCHAR(150) NOT NULL,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+                    CONSTRAINT fk_substrands_school
+                        FOREIGN KEY (school_id) REFERENCES schools(id)
+                        ON DELETE CASCADE,
+
+                    CONSTRAINT fk_substrands_strand
+                        FOREIGN KEY (strand_id) REFERENCES strands(id)
+                        ON DELETE CASCADE,
+
+                    UNIQUE KEY uq_substrands_school_strand_name (school_id, strand_id, name)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
+
             ];
 
             foreach ($sql as $query) {

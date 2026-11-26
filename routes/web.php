@@ -9,6 +9,7 @@ use App\Controllers\School\EnrollmentsController;
 use App\Controllers\School\StrandsController;
 use App\Controllers\School\StudentsController;
 use App\Controllers\School\SubjectsController;
+use App\Controllers\School\SubstrandsController;
 use App\Controllers\School\TeachersController;
 use App\Controllers\School\TermsController;
 use App\Controllers\School\YearsController;
@@ -51,6 +52,11 @@ $router->post('/school/subjects/delete', [SubjectsController::class, 'delete']);
 $router->get('/school/strands', [StrandsController::class, 'index']);
 $router->post('/school/strands/save', [StrandsController::class, 'save']);
 $router->post('/school/strands/delete', [StrandsController::class, 'delete']);
+
+// Substrands Management
+$router->get('/school/substrands', [SubstrandsController::class, 'index']);
+$router->post('/school/substrands/save', [SubstrandsController::class, 'save']);
+$router->post('/school/substrands/delete', [SubstrandsController::class, 'delete']);
 // Teachers Management
 $router->get('/school/teachers', [TeachersController::class, 'index']);
 $router->post('/school/teachers/save', [TeachersController::class, 'save']);
