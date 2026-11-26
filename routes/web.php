@@ -7,6 +7,7 @@ use App\Controllers\School\AllocationsController;
 use App\Controllers\School\AssessmentsController;
 use App\Controllers\School\ClassesController;
 use App\Controllers\School\EnrollmentsController;
+use App\Controllers\School\PerformanceLevelsController;
 use App\Controllers\School\StrandsController;
 use App\Controllers\School\StudentsController;
 use App\Controllers\School\SubjectsController;
@@ -100,3 +101,8 @@ $router->post('/school/demotions', [EnrollmentsController::class, 'demote']);
 $router->get('/school/assessments', [AssessmentsController::class, 'index']);
 $router->post('/school/assessments/save', [AssessmentsController::class, 'save']);
 $router->post('/school/assessments/delete', [AssessmentsController::class, 'delete']);
+
+// Performance Levels
+$router->get('/school/performance-levels', [PerformanceLevelsController::class, 'index']);
+$router->post('/school/performance-levels/save', [PerformanceLevelsController::class, 'save']);
+$router->post('/school/performance-levels/delete', [PerformanceLevelsController::class, 'delete']);

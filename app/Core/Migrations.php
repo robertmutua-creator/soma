@@ -207,6 +207,24 @@ class Migrations
                     INDEX idx_assessments_dates (school_id, start_date, end_date)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
 
+                "CREATE TABLE IF NOT EXISTS performance_levels (
+                    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                    school_id BIGINT UNSIGNED NOT NULL,
+                    code VARCHAR(20) NOT NULL,
+                    label VARCHAR(100) NOT NULL,
+                    min_mark DECIMAL(5,2) NOT NULL,
+                    max_mark DECIMAL(5,2) NOT NULL,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+                    CONSTRAINT fk_performance_levels_school
+                        FOREIGN KEY (school_id) REFERENCES schools(id)
+                        ON DELETE CASCADE,
+
+                    INDEX idx_performance_levels_school_range (school_id, min_mark, max_mark),
+                    UNIQUE KEY uq_performance_levels_school_code (school_id, code)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
+
             ];
 
             foreach ($sql as $query) {

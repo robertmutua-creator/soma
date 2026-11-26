@@ -230,7 +230,7 @@ class Controller
 
                 // Assessments
                 $links[] = ['link' => '/school/assessments', 'label' => 'Manage Assessments'];
-
+                $links[] = ['link' => '/school/performance-levels', 'label' => 'Performance Levels'];
                 // Student records & movement
                 $links[] = ['link' => '/school/students', 'label' => 'Manage Students'];
                 $links[] = ['link' => '/school/enrollments', 'label' => 'Students Enrollments'];
